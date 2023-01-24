@@ -12,7 +12,7 @@ const uploadFile = (pathFile, idCloudAvatar) => {
   return new Promise((resolve, reject) => {
     cloudinary.uploader.upload(
       pathFile,
-      { folder: 'avatars_phonebook' },
+      { folder: 'wallet_leopards' },
       (error, result) => {
         cloudinary.uploader.destroy(idCloudAvatar);
         if (error) reject(error);
