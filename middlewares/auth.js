@@ -7,6 +7,7 @@ const auth = async (req, res, next) => {
   const { SECRET_KEY } = process.env;
   const { authorization = '' } = req.headers;
   const [bearer, token] = authorization.split(' ');
+  console.log(token);
 
   try {
     if (bearer !== 'Bearer') {
