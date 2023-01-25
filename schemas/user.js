@@ -2,6 +2,13 @@ const Joi = require('joi');
 
 // NOTE: There may be an additional field like NAME_USER
 const registerUserSchema = Joi.object({
+  firstName: Joi.string().trim().min(1).max(12).required().messages({
+    'string.base': `{{#label}} should be a type of string`,
+    'string.empty': `{{#label}} must contain value`,
+    'string.min': `{{#label}} should have a minimum length of 1`,
+    'string.max': `{{#label}} should have a maximum length of 12`,
+    'any.required': `{{#label}} is a required field`,
+  }),
   email: Joi.string().trim().email().required().messages({
     'string.base': `{{#label}} should be a type of string`,
     'string.empty': `{{#label}} must contain value`,
