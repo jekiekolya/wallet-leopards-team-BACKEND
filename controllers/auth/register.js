@@ -1,7 +1,7 @@
 const { Conflict } = require('http-errors');
-const gravatar = require('gravatar');
 const uniqid = require('uniqid');
 
+const { createEmailMarkup } = require('../../helpers');
 require('dotenv').config();
 const { BASE_URL } = process.env;
 
@@ -9,7 +9,7 @@ const { User } = require('../../models');
 const { sendEmail } = require('../../helpers');
 
 const register = async (req, res) => {
-  const { email, password } = req.body;
+  const { firstName, email, password } = req.body;
   const user = await User.findOne({ email });
 
   // Checking if user already exist
@@ -18,13 +18,14 @@ const register = async (req, res) => {
   }
 
   // Get avatar URL
-  const avatarURL = gravatar.url(email);
+  const avatarURL =
+    'https://res.cloudinary.com/dpvkleqce/image/upload/v1674652226/wallet_leopards/zn7ur1gmwynrbmnqgzkj.png';
 
   // Create verificationToken user
   const verificationToken = uniqid();
 
   // Creating new user with hashed password
-  const newUser = new User({ email, avatarURL, verificationToken });
+  const newUser = new User({ firstName, email, avatarURL, verificationToken });
   newUser.setPassword(password);
 
   const createdUser = await newUser.save();
@@ -34,7 +35,7 @@ const register = async (req, res) => {
     to: email,
     subject: 'Verification email',
     text: `Please, confirm your email: ${BASE_URL}/api/users/verify/${verificationToken}`,
-    html: `<p>Please, <a target="_blank" href="${BASE_URL}/api/users/verify/${verificationToken}">confirm</a> your email</p>`,
+    html: createEmailMarkup(BASE_URL, verificationToken),
   };
   await sendEmail(mail);
 
