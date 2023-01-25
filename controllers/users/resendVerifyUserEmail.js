@@ -1,5 +1,6 @@
 const { NotFound, Conflict } = require('http-errors');
 const uniqid = require('uniqid');
+const { createEmailMarkup } = require('../../helpers');
 
 require('dotenv').config();
 const { BASE_URL } = process.env;
@@ -35,7 +36,7 @@ const resendVerifyUserEmail = async (req, res) => {
     to: email,
     subject: 'Verification email',
     text: `Please, confirm your email: ${BASE_URL}/api/users/verify/${verificationToken}`,
-    html: `<p>Please, <a target="_blank" href="${BASE_URL}/api/users/verify/${verificationToken}">confirm</a> your email</p>`,
+    html: createEmailMarkup(BASE_URL, verificationToken),
   };
   await sendEmail(mail);
 
