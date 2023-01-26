@@ -4,9 +4,9 @@ const { BadRequest } = require('http-errors');
 const addTransaction = async (req, res) => {
   const { _id: owner, totalBalance } = req.user;
 
-  const { transactionType, idCategory, amount } = req.body;
+  const { transactionType, category, amount } = req.body;
 
-  if (!transactionType && !idCategory) {
+  if (!transactionType && !category) {
     throw new BadRequest('Please choose the costs category');
   }
 
