@@ -21,8 +21,8 @@ const transactionSchema = new Schema(
       minlength: 0,
       maxlength: 200,
     },
-    idCategory: {
-      type: String,
+    category: {
+      type: Object,
     },
     owner: {
       type: Schema.Types.ObjectId,
