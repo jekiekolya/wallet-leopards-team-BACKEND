@@ -41,6 +41,10 @@ const userSchema = Schema(
       type: String,
       default: null,
     },
+    totalBalance: {
+      type: Number,
+      default: 0,
+    },
     verify: {
       type: Boolean,
       default: false,
