@@ -45,7 +45,6 @@ const register = async (req, res) => {
     data: {
       user: {
         email,
-        avatarURL,
         subscription: createdUser.subscription,
         verificationToken,
       },
