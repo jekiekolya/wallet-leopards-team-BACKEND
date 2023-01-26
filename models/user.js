@@ -23,7 +23,6 @@ const userSchema = Schema(
       type: String,
       required: [true, 'Set password for user'],
       minlength: 6,
-      maxlength: 12,
     },
     subscription: {
       type: String,
