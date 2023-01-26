@@ -2,13 +2,13 @@ const express = require('express');
 const router = express.Router();
 
 const ctrl = require('../../controllers/transactions');
-const { schemas } = require('../../models');
+const { transactionSchema } = require('../../schemas');
 const { validation, auth, ctrlWrapper } = require('../../middlewares');
 
 router.post(
   '/',
   auth,
-  validation(schemas.addSchema),
+  validation(transactionSchema.addSchema),
   ctrlWrapper(ctrl.addTransaction)
 );
 

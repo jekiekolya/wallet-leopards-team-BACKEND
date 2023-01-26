@@ -1,5 +1,4 @@
 const { Schema, model } = require('mongoose');
-const Joi = require('joi');
 const { handleMongooseError } = require('../helpers');
 
 const transactionSchema = new Schema(
@@ -19,6 +18,8 @@ const transactionSchema = new Schema(
     },
     comment: {
       type: String,
+      minlength: 0,
+      maxlength: 200,
     },
     idCategory: {
       type: String,
@@ -28,24 +29,15 @@ const transactionSchema = new Schema(
       ref: 'user',
       required: true,
     },
+    remainingBalance: {
+      type: Number,
+    },
   },
   { versionKey: false, timestamps: true }
 );
 
 transactionSchema.post('save', handleMongooseError);
 
-const addSchema = Joi.object({
-  transactionType: Joi.boolean().required(),
-  amount: Joi.number().required(),
-  date: Joi.date().iso().required(),
-  comment: Joi.string(),
-  idCategory: Joi.string(),
-});
-
-const schemas = {
-  addSchema,
-};
-
 const Transaction = model('transaction', transactionSchema);
 
-module.exports = { Transaction, schemas };
+module.exports = { Transaction };

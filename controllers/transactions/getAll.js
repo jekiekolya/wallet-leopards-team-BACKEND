@@ -8,9 +8,15 @@ const getAll = async (req, res) => {
   const result = await Transaction.find({ owner }, '-createdAt -updatedAt', {
     skip,
     limit,
-  }).populate('owner', 'firstName email');
+  }).populate('owner', 'firstName email totalBalance');
 
-  res.json(result);
+  res.json({
+    status: 'success',
+    code: 200,
+    data: {
+      transactions: [result],
+    },
+  });
 };
 
 module.exports = getAll;
