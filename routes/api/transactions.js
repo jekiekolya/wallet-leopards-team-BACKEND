@@ -14,4 +14,6 @@ router.post(
 
 router.get('/', auth, ctrlWrapper(ctrl.getAll));
 
+router.get('/statistics', auth, ctrlWrapper(ctrl.userStatistics));
+
 module.exports = router;
