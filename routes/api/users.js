@@ -28,4 +28,7 @@ router.post(
   ctrlWrapper(ctrl.resendVerifyUserEmail)
 );
 
+// Work with a list of categories
+router.get('/categories', auth, ctrlWrapper(ctrl.getCategoriesList));
+
 module.exports = router;

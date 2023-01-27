@@ -40,4 +40,4 @@ transactionSchema.post('save', handleMongooseError);
 
 const Transaction = model('transaction', transactionSchema);
 
-module.exports = { Transaction };
+module.exports = Transaction;

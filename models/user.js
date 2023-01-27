@@ -41,6 +41,7 @@ const userSchema = Schema(
       type: String,
       default: null,
     },
+    categories: [Object],
     totalBalance: {
       type: Number,
       default: 0,

@@ -5,7 +5,7 @@ const addSchema = Joi.object({
   amount: Joi.number().required(),
   date: Joi.date().iso().required(),
   comment: Joi.string().optional().min(0).max(200),
-  category: Joi.object(),
+  category: Joi.string(),
 });
 
 module.exports = {
