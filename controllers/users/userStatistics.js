@@ -1,7 +1,7 @@
 const { User } = require('../../models');
 
 const userStatistics = async (req, res) => {
-  const { _id, email, firstName } = req.user;
+  const { _id, email, firstName, category = 'all' } = req.user;
 
   const user = await User.findByIdAndUpdate(_id, req.body, {
     new: true,
@@ -17,6 +17,7 @@ const userStatistics = async (req, res) => {
         _id,
         email,
         firstName,
+        category,
       },
     },
   });
