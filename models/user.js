@@ -41,6 +41,7 @@ const userSchema = Schema(
       type: String,
       default: null,
     },
+    categories: [Object],
     totalBalance: {
       type: Number,
       default: 0,
@@ -75,3 +76,28 @@ userSchema.methods.comparePassword = function comparePassword(password) {
 const User = model('user', userSchema);
 
 module.exports = User;
+
+//  "type": "array",
+// "items": {
+//   "type": "object",
+//   "properties": {
+//     "email": {
+//       "type": "string",
+//       "description": "User's email",
+//       "format": "email"
+//     },
+//     "userId": {
+//       "type": "number",
+//       "description": "User's id",
+//       "example": "32143232436545474"
+//     }
+//   }
+// },
+// "example": [
+//   { "email": "1@gmail.com", "userId": "1" },
+//   { "email": "2@gmail.com", "userId": "2" }
+// ]
+
+// { "Bearer": [] }
+
+// дописати всім стандартні помилки 404 + контент у відповідях

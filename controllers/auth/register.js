@@ -1,6 +1,7 @@
 const { Conflict } = require('http-errors');
 const uniqid = require('uniqid');
 
+const { categoriesList } = require('../../src');
 const { createEmailMarkup } = require('../../helpers');
 require('dotenv').config();
 const { BASE_URL } = process.env;
@@ -24,8 +25,17 @@ const register = async (req, res) => {
   // Create verificationToken user
   const verificationToken = uniqid();
 
+  // Create user categories list
+  const categories = [...categoriesList];
+
   // Creating new user with hashed password
-  const newUser = new User({ firstName, email, avatarURL, verificationToken });
+  const newUser = new User({
+    firstName,
+    email,
+    avatarURL,
+    categories,
+    verificationToken,
+  });
   newUser.setPassword(password);
 
   const createdUser = await newUser.save();
