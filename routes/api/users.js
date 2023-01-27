@@ -28,4 +28,6 @@ router.post(
   ctrlWrapper(ctrl.resendVerifyUserEmail)
 );
 
+router.get('/statistics', auth, ctrlWrapper(ctrl.userStatistics));
+
 module.exports = router;
