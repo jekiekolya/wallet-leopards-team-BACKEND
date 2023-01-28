@@ -2,11 +2,15 @@ const { Transaction, User } = require('../../models');
 const { BadRequest } = require('http-errors');
 
 const addTransaction = async (req, res) => {
-  const { _id: owner, totalBalance: userBalance, categories } = req.user;
+  const {
+    _id: owner,
+    totalBalance: userBalance,
+    categories,
+    currentInitBalance,
+    changeBalance,
+  } = req.user;
 
   const { transactionType, category, amount } = req.body;
-
-  console.log(category);
 
   if (!transactionType && !category) {
     throw new BadRequest('Please choose the costs category');
@@ -16,15 +20,35 @@ const addTransaction = async (req, res) => {
     throw new BadRequest('Invalid request body');
   }
 
+  const symbolsLength = amount.toString().match(/\.(\d+)/)?.[1].length;
+
+  if (symbolsLength > 2) {
+    throw new BadRequest('Maximum of 2 decimal places');
+  }
+
   let remainingBalance = 0;
 
-  if (!transactionType) {
+  if (!transactionType && !changeBalance) {
     remainingBalance = userBalance - amount;
-  } else {
+  }
+
+  if (transactionType && !changeBalance) {
     remainingBalance = userBalance + amount;
   }
 
-  await User.findByIdAndUpdate(owner, { totalBalance: remainingBalance });
+  if (!transactionType && changeBalance) {
+    remainingBalance = currentInitBalance - amount;
+  }
+
+  if (transactionType && changeBalance) {
+    remainingBalance = currentInitBalance + amount;
+  }
+
+  if (!changeBalance) {
+    await User.findByIdAndUpdate(owner, { totalBalance: remainingBalance });
+  } else {
+    await User.findByIdAndUpdate(owner, { totalBalance: userBalance });
+  }
 
   if (!category) {
     const result = await Transaction.create({
@@ -62,26 +86,6 @@ const addTransaction = async (req, res) => {
       },
     });
   }
-
-  // const transactionsByDate = await Transaction.find({
-  //   owner,
-  //   date: { $lt: date },
-  // });
-
-  // const inAscendingDate = transactionsByDate.sort(
-  //   (firstDate, secondDate) => firstDate.date - secondDate.date
-  // );
-
-  // const changeBalance = inAscendingDate.forEach(async it => {
-  //   const newRemainingBalance = !it.transactionType
-  //     ? it.initialBalance - amount
-  //     : it.initialBalance + amount;
-  //   await Transaction.findByIdAndUpdate(it._id, {
-  //     remainingBalance: newRemainingBalance,
-  //   });
-  // });
-
-  // console.log(changeBalance);
 };
 
 module.exports = addTransaction;
