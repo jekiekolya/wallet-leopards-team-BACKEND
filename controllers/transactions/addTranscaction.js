@@ -20,6 +20,12 @@ const addTransaction = async (req, res) => {
     throw new BadRequest('Invalid request body');
   }
 
+  const symbolsLength = amount.toString().match(/\.(\d+)/)?.[1].length;
+
+  if (symbolsLength > 2) {
+    throw new BadRequest('Maximum of 2 decimal places');
+  }
+
   let remainingBalance = 0;
 
   if (!transactionType && !changeBalance) {
