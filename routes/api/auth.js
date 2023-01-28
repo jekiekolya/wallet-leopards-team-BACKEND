@@ -23,6 +23,6 @@ router.post('/logout', auth, ctrlWrapper(ctrl.logout));
 router.get('/verify/:verificationToken', ctrlWrapper(ctrl.verifyEmail));
 
 // Reset password
-router.post('/reset-password', ctrlWrapper(ctrl.resetPassword));
+router.post('/password-recovery', ctrlWrapper(ctrl.passwordRecovery));
 
 module.exports = router;

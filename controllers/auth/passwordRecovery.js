@@ -1,7 +1,7 @@
 const { sendEmail } = require('../../helpers');
 const { resetPasswordMarkup } = require('../../helpers');
 
-const resetPassword = async (req, res) => {
+const passwordRecovery = async (req, res) => {
   const { email, OTP } = req.body;
 
   const mail = {
@@ -21,4 +21,4 @@ const resetPassword = async (req, res) => {
   });
 };
 
-module.exports = resetPassword;
+module.exports = passwordRecovery;
