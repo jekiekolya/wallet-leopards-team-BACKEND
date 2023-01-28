@@ -2,9 +2,12 @@ const { Transaction } = require('../../models');
 const { User } = require('../../models');
 
 const userStatistics = async (req, res) => {
-  const { _id: owner } = req.user;
+  const { _id: owner, firstName } = req.user;
   const { totalBalance: balance } = await User.findByIdAndUpdate(owner);
-  const { year = 2023, month = 1 } = req.query;
+
+  const yearsNow = new Date().getFullYear();
+  const monthNow = new Date().getMonth();
+  const { year = `${yearsNow}`, month = `${monthNow + 1}` } = req.query;
 
   const allTransaction = await Transaction.find(
     { owner },
@@ -19,7 +22,10 @@ const userStatistics = async (req, res) => {
     item => item.date >= startDate && item.date <= endDate
   );
 
-  const allExpensesTransaction = transactionFilterByDate.filter(
+  const expensesPerMonth = transactionFilterByDate.filter(
+    item => item.transactionType === false
+  );
+  const getAllExpenses = allTransaction.filter(
     item => item.transactionType === false
   );
   const allIncomeTransaction = transactionFilterByDate.filter(
@@ -29,8 +35,12 @@ const userStatistics = async (req, res) => {
   const getTotalAmount = data =>
     data.reduce((acc, transaction) => acc + transaction.amount, 0);
 
-  const amountByTransaction = allExpensesTransaction.reduce(
-    (acc, transaction) => {
+  const expenses = getTotalAmount(expensesPerMonth);
+  const income = getTotalAmount(allIncomeTransaction);
+  const profit = income - expenses;
+
+  const amountByTransaction = transaction =>
+    transaction.reduce((acc, transaction) => {
       const id = transaction.category._id;
       const sameTransaction = acc.find(element => element.category._id === id);
 
@@ -39,23 +49,33 @@ const userStatistics = async (req, res) => {
       else acc.push(transaction);
 
       return acc;
-    },
-    []
+    }, []);
+
+  const expensesByCategory = transaction =>
+    transaction.map(item => {
+      const id = item.category._id;
+      const name = item.category.name;
+      const amount = item.amount;
+      const object = { id, name, amount };
+      return object;
+    });
+
+  const queryExpenses = expensesByCategory(
+    amountByTransaction(expensesPerMonth)
   );
 
-  const categoryExpenses = amountByTransaction.map(item => {
-    const id = item.category._id;
-    const name = item.category.name;
-    const amount = item.amount;
-    const object = { id, name, amount };
-    return object;
-  });
+  const totalExpenses = expensesByCategory(amountByTransaction(getAllExpenses));
 
   const data = {
-    expenses: getTotalAmount(allExpensesTransaction),
-    income: getTotalAmount(allIncomeTransaction),
+    firstName,
+    _id: owner,
+    income,
+    expenses,
+    profit,
     balance,
-    categoryExpenses,
+    queryDate: { month, year },
+    queryExpenses,
+    totalExpenses,
   };
 
   res.status(200).json({
