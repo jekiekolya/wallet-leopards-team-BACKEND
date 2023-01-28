@@ -14,15 +14,22 @@ const addCategory = async (req, res) => {
     });
     return;
   }
+  const newCategory = { _id: uniqid(), name: category };
+  const update = [...categories, newCategory];
 
-  const update = [...categories, { _id: uniqid(), name: category }];
-
-  await User.findByIdAndUpdate(owner, { categories: update });
+  const result = await User.findByIdAndUpdate(
+    owner,
+    { categories: update },
+    {
+      new: true,
+    }
+  );
 
   res.status(201).json({
     status: 'success',
     code: 201,
     message: 'New category successfully created',
+    data: newCategory,
   });
 };
 

@@ -1,9 +1,9 @@
 const { User } = require('../../models');
 const removeCategory = async (req, res) => {
-  const { category } = req.body;
+  const { categoryId } = req.params;
   const { _id: owner, categories } = req.user;
 
-  const checkCategories = categories.find(item => item.name === category);
+  const checkCategories = categories.find(item => item._id === categoryId);
   if (!checkCategories) {
     res.status(409).json({
       status: 'failure',
@@ -14,9 +14,8 @@ const removeCategory = async (req, res) => {
   }
 
   const update = [...categories].filter(item => {
-    return item.name !== category;
+    return item._id !== categoryId;
   });
-  console.log('hi');
 
   await User.findByIdAndUpdate(owner, { categories: update });
 
