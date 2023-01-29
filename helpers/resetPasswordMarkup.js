@@ -1,4 +1,4 @@
-const resetPasswordMarkup = function (OTP) {
+const resetPasswordMarkup = function (email) {
   return `<!DOCTYPE html>
 <html lang="en" >
 <head>
@@ -14,7 +14,7 @@ const resetPasswordMarkup = function (OTP) {
     </div>
     <p style="font-size:1.1em">Hi,</p>
     <p>Thank you for choosing Leopards Team. Use the following OTP to complete your Password Recovery Procedure. OTP is valid for 5 minutes</p>
-    <h2 style="background: #00466a;margin: 0 auto;width: max-content;padding: 0 10px;color: #fff;border-radius: 4px;">${OTP}</h2>
+    <h2 style="background: #00466a;margin: 0 auto;width: max-content;padding: 0 10px;color: #fff;border-radius: 4px;">${email}</h2>
     <p style="font-size:0.9em;">Regards,<br />Leopards Team</p>
     <hr style="border:none;border-top:1px solid #eee" />
   </div>

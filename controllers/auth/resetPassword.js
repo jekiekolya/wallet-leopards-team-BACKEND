@@ -1,13 +1,15 @@
 const { sendEmail } = require('../../helpers');
 const { resetPasswordMarkup } = require('../../helpers');
-
-const passwordRecovery = async (req, res) => {
-  const { email, OTP } = req.body;
+// const bcrypt = require('bcryptjs');
+// const jwt = require('jsonwebtoken');
+const resetPassword = async (req, res) => {
+  const { email } = req.body;
+  // const { SECRET_KEY } = process.env;
 
   const mail = {
     to: email,
     subject: 'PASSWORD RECOVERY',
-    html: resetPasswordMarkup(OTP),
+    html: resetPasswordMarkup(email),
   };
   await sendEmail(mail);
 
@@ -16,9 +18,8 @@ const passwordRecovery = async (req, res) => {
     code: 201,
     data: {
       email,
-      OTP,
     },
   });
 };
 
-module.exports = passwordRecovery;
+module.exports = resetPassword;
