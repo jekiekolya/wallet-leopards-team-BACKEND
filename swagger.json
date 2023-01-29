@@ -20,6 +20,10 @@
     {
       "name": "Transaction",
       "description": "Transaction endpoints"
+    },
+    {
+      "name": "Category",
+      "description": "Category endpoints"
     }
   ],
   "paths": {
@@ -53,11 +57,23 @@
           },
           "400": {
             "description": "Bad request (invalid request body)",
-            "content": {}
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorBadRequesResponse"
+                }
+              }
+            }
           },
           "409": {
             "description": "User with this email already exists",
-            "content": {}
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorConflictResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -92,11 +108,23 @@
           },
           "400": {
             "description": "Bad request (invalid request body)",
-            "content": {}
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorBadRequesResponse"
+                }
+              }
+            }
           },
           "401": {
-            "description": "Email or password is wrong/Email is not verified",
-            "content": {}
+            "description": "Email or password is wrong / Email is not verified",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorUnauthorizedResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -112,8 +140,274 @@
             "content": {}
           },
           "401": {
-            "description": "Not authorized",
-            "content": {}
+            "description": "Not authorized (no token provided)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorUnauthorizedResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/verify/{verificationToken}": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Confirm the verification letter",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "verificationToken",
+            "type": "string",
+            "required": "true"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/authVerificationResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User with this email not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorNotFoundResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/current": {
+      "get": {
+        "tags": ["User"],
+        "summary": "Get user info",
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getUserInfoResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authorized (no token provided)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorUnauthorizedResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/categories": {
+      "get": {
+        "tags": ["User"],
+        "summary": "Get a list of user categories",
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getUserCategoriesResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authorized (no token provided)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorUnauthorizedResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/avatars": {
+      "patch": {
+        "tags": ["User"],
+        "summary": "Update user avatar",
+        "security": [{ "Bearer": [] }],
+        "consumes": "multipart/form-data",
+        "parameters": [
+          {
+            "in": "formData",
+            "name": "upfile",
+            "type": "file",
+            "required": "true",
+            "description": "The file to upload"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/updateAvatarResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request (avatar not attach)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorBadRequesResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authorized (no token provided)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorUnauthorizedResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/subscription": {
+      "patch": {
+        "tags": ["User"],
+        "summary": "Update user subscription",
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/updateSubscriptionResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authorized (no token provided)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorUnauthorizedResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/verify": {
+      "post": {
+        "tags": ["User"],
+        "summary": "Resend verify user email (if the previous one was omitted)",
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/reVerificationResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User with this email not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorNotFoundResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "User with this email already exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorConflictResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/transactions": {
+      "post": {
+        "tags": ["Transaction"],
+        "summary": "Add transaction",
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "description": "Object with information about the transaction to be added",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/addTransactionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/addTransactionResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request (invalid request body)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorBadRequesResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authorized (no token provided)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorUnauthorizedResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -123,8 +417,13 @@
     "schemas": {
       "RegistrationRequest": {
         "type": "object",
-        "required": ["email", "password"],
+        "required": ["firstName", "email", "password"],
         "properties": {
+          "firstName": {
+            "type": "string",
+            "description": "Username",
+            "example": "Mark"
+          },
           "email": {
             "type": "string",
             "description": "User's email",
@@ -134,36 +433,43 @@
             "type": "string",
             "description": "User's password",
             "example": "qwerty123"
-          },
-          "subscription": {
-            "type": "string",
-            "description": "Type of user subscription",
-            "oneOf": ["starter", "pro", "business"],
-            "example": "starter"
           }
         }
       },
       "RegistrationResponse": {
         "type": "object",
         "properties": {
-          "user": {
+          "status": {
+            "type": "string",
+            "example": "success"
+          },
+          "code": {
+            "type": "string",
+            "example": "201"
+          },
+          "data": {
             "type": "object",
-            "description": "User's data'",
             "properties": {
-              "email": {
-                "type": "string",
-                "description": "User's email",
-                "format": "email"
-              },
-              "subscription": {
-                "type": "string",
-                "description": "Type of user subscription",
-                "example": "starter"
-              },
-              "avatarURL": {
-                "type": "string",
-                "description": "Link to the user's avatar",
-                "example": "http://"
+              "user": {
+                "type": "object",
+                "description": "User's data",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "description": "User's email",
+                    "format": "email"
+                  },
+                  "subscription": {
+                    "type": "string",
+                    "description": "Type of user subscription",
+                    "example": "starter"
+                  },
+                  "verificationToken": {
+                    "type": "string",
+                    "description": "Token for verification",
+                    "example": "1d500a7035cf0304c116e"
+                  }
+                }
               }
             }
           }
@@ -188,31 +494,411 @@
       "LoginResponse": {
         "type": "object",
         "properties": {
-          "user": {
+          "status": {
+            "type": "string",
+            "example": "success"
+          },
+          "code": {
+            "type": "string",
+            "example": "200"
+          },
+          "data": {
             "type": "object",
-            "description": "User's data'",
             "properties": {
-              "email": {
-                "type": "string",
-                "description": "User's email",
-                "format": "email"
+              "user": {
+                "type": "object",
+                "description": "User's data'",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "description": "User's email",
+                    "format": "email"
+                  },
+                  "subscription": {
+                    "type": "string",
+                    "description": "Type of user subscription",
+                    "example": "starter"
+                  },
+                  "avatarURL": {
+                    "type": "string",
+                    "description": "Link to the user's avatar",
+                    "example": "https://res.cloudinary.com/dpvkleqce/image/upload/v1674652226/wallet_leopards/zn7ur1gmwynrbmnqgzkj.png"
+                  },
+                  "firstName": {
+                    "type": "string",
+                    "description": "Username",
+                    "example": "Mark"
+                  },
+                  "categories": {
+                    "type": "array",
+                    "description": "User categories for expenses",
+                    "example": [
+                      { "_id": "1", "name": "Main expenses" },
+                      { "_id": "2", "name": "Products" }
+                    ]
+                  }
+                }
               },
-              "subscription": {
+              "token": {
                 "type": "string",
-                "description": "Type of user subscription",
-                "example": "starter"
-              },
-              "avatarURL": {
-                "type": "string",
-                "description": "Link to the user's avatar",
-                "example": "http://"
+                "description": "Session token (needed for all requests)",
+                "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI1ZmMyMDg1YmQwOTM2NTI4MTA3Y2UyNzQiLCJzaWQiOiI1ZmMyZDJmY2UxZDIwNTA2NzAyYmRkMjIiLCJpYXQiOjE2MDY2MDM1MTYsImV4cCI6MTYwNjYwNzExNn0.rJ_QjU4KvA76H96RHsvOBChK0Vjbd0NmqjMxdQVJIXA"
               }
             }
-          },
-          "token": {
+          }
+        }
+      },
+      "authVerificationResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
             "type": "string",
-            "description": "Session token (needed for all requests)",
-            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI1ZmMyMDg1YmQwOTM2NTI4MTA3Y2UyNzQiLCJzaWQiOiI1ZmMyZDJmY2UxZDIwNTA2NzAyYmRkMjIiLCJpYXQiOjE2MDY2MDM1MTYsImV4cCI6MTYwNjYwNzExNn0.rJ_QjU4KvA76H96RHsvOBChK0Vjbd0NmqjMxdQVJIXA"
+            "example": "success"
+          },
+          "code": {
+            "type": "string",
+            "example": "200"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string",
+                "description": "Message of successful email verification",
+                "example": "Verification successful"
+              }
+            }
+          }
+        }
+      },
+      "getUserInfoResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "success"
+          },
+          "code": {
+            "type": "string",
+            "example": "200"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "user": {
+                "type": "object",
+                "description": "User info",
+                "properties": {
+                  "_id": {
+                    "type": "string",
+                    "description": "User id",
+                    "example": "11a0f1653947d6431e1a0111"
+                  },
+                  "email": {
+                    "type": "string",
+                    "description": "User's email",
+                    "format": "email"
+                  },
+                  "subscription": {
+                    "type": "string",
+                    "description": "Type of user subscription",
+                    "example": "starter"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "updateAvatarResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "success"
+          },
+          "code": {
+            "type": "string",
+            "example": "200"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "avatarURL": {
+                "type": "string",
+                "description": "Updated user avatar",
+                "example": "https://res.cloudinary.com/dpvkleqce/image/upload/v1674652226/wallet_leopards/zn7ur1gmwynrbmnqgzkj.png"
+              }
+            }
+          }
+        }
+      },
+      "getUserCategoriesResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "success"
+          },
+          "code": {
+            "type": "string",
+            "example": "200"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "categories": {
+                "type": "array",
+                "description": "User categories list for expenses",
+                "example": [
+                  { "_id": "1", "name": "Main expenses" },
+                  { "_id": "2", "name": "Products" }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "updateSubscriptionResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "success"
+          },
+          "code": {
+            "type": "string",
+            "example": "200"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "user": {
+                "type": "object",
+                "description": "User data and updated subscription",
+                "properties": {
+                  "_id": {
+                    "type": "string",
+                    "description": "User id",
+                    "example": "11a0f1653947d6431e1a0111"
+                  },
+                  "email": {
+                    "type": "string",
+                    "description": "User's email",
+                    "format": "email"
+                  },
+                  "subscription": {
+                    "type": "string",
+                    "description": "Type of user subscription",
+                    "example": "pro"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "reVerificationResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "success"
+          },
+          "code": {
+            "type": "string",
+            "example": "200"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "user": {
+                "type": "object",
+                "description": "User's email and new token for verification",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "description": "User's email",
+                    "format": "email"
+                  },
+                  "verificationToken": {
+                    "type": "string",
+                    "description": "Token for verification",
+                    "example": "1d500a7035cf0304c116e"
+                  }
+                }
+              },
+              "message": {
+                "type": "string",
+                "description": "Message of sending a verification letter",
+                "example": "A verification letter was sent to the email - user@example.com"
+              }
+            }
+          }
+        }
+      },
+      "addTransactionRequest": {
+        "type": "object",
+        "required": ["transactionType", "amount", "date"],
+        "properties": {
+          "transactionType": {
+            "type": "boolean",
+            "description": "Transaction type: true - if income, false - if expense",
+            "example": "false"
+          },
+          "amount": {
+            "type": "number",
+            "description": "Transaction amount",
+            "example": "200"
+          },
+          "date": {
+            "type": "string",
+            "description": "Transaction date in ISO format (with time)",
+            "example": "2023-01-27T10:33:43.335+00:00"
+          },
+          "comment": {
+            "type": "string",
+            "description": "Comment about the transaction",
+            "example": "Donate for victory"
+          },
+          "category": {
+            "type": "string",
+            "description": "Category id. This field is entered only if the transaction type is false",
+            "example": "1"
+          }
+        }
+      },
+      "addTransactionResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "success"
+          },
+          "code": {
+            "type": "string",
+            "example": "201"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "transaction": {
+                "type": "object",
+                "description": "Transaction data",
+                "properties": {
+                  "transactionType": {
+                    "type": "boolean",
+                    "description": "Transaction type: true - if income, false - if expense",
+                    "example": "true"
+                  },
+                  "amount": {
+                    "type": "number",
+                    "description": "Transaction amount",
+                    "example": "200"
+                  },
+                  "date": {
+                    "type": "string",
+                    "description": "Transaction date in ISO format (with time)",
+                    "example": "2023-01-27T10:33:43.335+00:00"
+                  },
+                  "comment": {
+                    "type": "string",
+                    "description": "Comment about the transaction",
+                    "example": "Donate for victory"
+                  },
+                  "category": {
+                    "type": "object",
+                    "description": "Category object. This field will only be populated if the transaction type is false",
+                    "example": { "_id": "1", "name": "Main expense" }
+                  },
+                  "owner": {
+                    "type": "string",
+                    "description": "User id",
+                    "example": "1d500a7035cf0304c000e"
+                  },
+                  "remainingBalance": {
+                    "type": "number",
+                    "description": "The user's balance after the transaction",
+                    "example": "1000"
+                  },
+                  "_id": {
+                    "type": "string",
+                    "description": "Transaction id",
+                    "example": "1s220s7044cg0304c000e"
+                  },
+                  "createdAt": {
+                    "type": "string",
+                    "description": "Transaction creation date",
+                    "example": "2023-01-27T15:04:23.470Z"
+                  },
+                  "updatedAt": {
+                    "type": "string",
+                    "description": "Transaction creation date",
+                    "example": "2023-01-29T02:04:23.470Z"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "errorBadRequesResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "integer",
+            "description": "Error status code",
+            "example": "400"
+          },
+          "message": {
+            "type": "string",
+            "description": "Error message",
+            "example": "Bad request"
+          }
+        }
+      },
+      "errorConflictResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "integer",
+            "description": "Error status code",
+            "example": "409"
+          },
+          "message": {
+            "type": "string",
+            "description": "Error message",
+            "example": "User with email - user@example.com, already exist"
+          }
+        }
+      },
+      "errorUnauthorizedResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "integer",
+            "description": "Error status code",
+            "example": "401"
+          },
+          "message": {
+            "type": "string",
+            "description": "Error message",
+            "example": "Not authorized"
+          }
+        }
+      },
+      "errorNotFoundResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "integer",
+            "description": "Error status code",
+            "example": "404"
+          },
+          "message": {
+            "type": "string",
+            "description": "Error message",
+            "example": "Not found"
           }
         }
       }
@@ -226,4 +912,3 @@
     }
   }
 }
-
