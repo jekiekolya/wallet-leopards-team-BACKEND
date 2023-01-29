@@ -20,6 +20,10 @@
     {
       "name": "Transaction",
       "description": "Transaction endpoints"
+    },
+    {
+      "name": "Category",
+      "description": "Category endpoints"
     }
   ],
   "paths": {
@@ -53,11 +57,23 @@
           },
           "400": {
             "description": "Bad request (invalid request body)",
-            "content": {}
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorBadRequesResponse"
+                }
+              }
+            }
           },
           "409": {
             "description": "User with this email already exists",
-            "content": {}
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorConflictResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -92,11 +108,23 @@
           },
           "400": {
             "description": "Bad request (invalid request body)",
-            "content": {}
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorBadRequesResponse"
+                }
+              }
+            }
           },
           "401": {
-            "description": "Email or password is wrong/Email is not verified",
-            "content": {}
+            "description": "Email or password is wrong / Email is not verified",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorUnauthorizedResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -112,8 +140,224 @@
             "content": {}
           },
           "401": {
-            "description": "Not authorized",
-            "content": {}
+            "description": "Not authorized (no token provided)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorUnauthorizedResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/verify/{verificationToken}": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "User verification",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "verificationToken",
+            "type": "string",
+            "required": "true"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/authVerificationResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User with this email not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorNotFoundResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/current": {
+      "get": {
+        "tags": ["User"],
+        "summary": "Get user info",
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getUserInfoResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authorized (no token provided)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorUnauthorizedResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/categories": {
+      "get": {
+        "tags": ["User"],
+        "summary": "Get a list of user categories",
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getUserCategoriesResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authorized (no token provided)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorUnauthorizedResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/avatars": {
+      "patch": {
+        "tags": ["User"],
+        "summary": "Update user avatar",
+        "security": [{ "Bearer": [] }],
+        "consumes": "multipart/form-data",
+        "parameters": [
+          {
+            "in": "formData",
+            "name": "upfile",
+            "type": "file",
+            "required": "true",
+            "description": "The file to upload"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/updateAvatarResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request (avatar not attach)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorBadRequesResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authorized (no token provided)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorUnauthorizedResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/subscription": {
+      "patch": {
+        "tags": ["User"],
+        "summary": "Update user subscription",
+        "security": [{ "Bearer": [] }],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/updateSubscriptionResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authorized (no token provided)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorUnauthorizedResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/verify": {
+      "post": {
+        "tags": ["User"],
+        "summary": "Resend verify user email",
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/reVerificationResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User with this email not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorNotFoundResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "User with this email already exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorConflictResponse"
+                }
+              }
+            }
           }
         }
       }
@@ -123,8 +367,13 @@
     "schemas": {
       "RegistrationRequest": {
         "type": "object",
-        "required": ["email", "password"],
+        "required": ["firstName", "email", "password"],
         "properties": {
+          "firstName": {
+            "type": "string",
+            "description": "Username",
+            "example": "Mark"
+          },
           "email": {
             "type": "string",
             "description": "User's email",
@@ -134,12 +383,6 @@
             "type": "string",
             "description": "User's password",
             "example": "qwerty123"
-          },
-          "subscription": {
-            "type": "string",
-            "description": "Type of user subscription",
-            "oneOf": ["starter", "pro", "business"],
-            "example": "starter"
           }
         }
       },
@@ -163,7 +406,7 @@
               "avatarURL": {
                 "type": "string",
                 "description": "Link to the user's avatar",
-                "example": "http://"
+                "example": "https://res.cloudinary.com/dpvkleqce/image/upload/v1674652226/wallet_leopards/zn7ur1gmwynrbmnqgzkj.png"
               }
             }
           }
@@ -205,7 +448,20 @@
               "avatarURL": {
                 "type": "string",
                 "description": "Link to the user's avatar",
-                "example": "http://"
+                "example": "https://res.cloudinary.com/dpvkleqce/image/upload/v1674652226/wallet_leopards/zn7ur1gmwynrbmnqgzkj.png"
+              },
+              "firstName": {
+                "type": "string",
+                "description": "Username",
+                "example": "Mark"
+              },
+              "categories": {
+                "type": "array",
+                "description": "User categories for expenses",
+                "example": [
+                  { "_id": "1", "name": "Main expenses" },
+                  { "_id": "2", "name": "Products" }
+                ]
               }
             }
           },
@@ -213,6 +469,200 @@
             "type": "string",
             "description": "Session token (needed for all requests)",
             "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI1ZmMyMDg1YmQwOTM2NTI4MTA3Y2UyNzQiLCJzaWQiOiI1ZmMyZDJmY2UxZDIwNTA2NzAyYmRkMjIiLCJpYXQiOjE2MDY2MDM1MTYsImV4cCI6MTYwNjYwNzExNn0.rJ_QjU4KvA76H96RHsvOBChK0Vjbd0NmqjMxdQVJIXA"
+          }
+        }
+      },
+      "authVerificationResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "description": "Confirmation of verification",
+            "properties": {
+              "message": {
+                "type": "string",
+                "description": "Successful message",
+                "example": "Verification successful"
+              }
+            }
+          }
+        }
+      },
+      "getUserInfoResponse": {
+        "type": "object",
+        "properties": {
+          "user": {
+            "type": "object",
+            "description": "User info",
+            "properties": {
+              "_id": {
+                "type": "string",
+                "description": "User id",
+                "example": "11a0f1653947d6431e1a0111"
+              },
+              "email": {
+                "type": "string",
+                "description": "User's email",
+                "format": "email"
+              },
+              "subscription": {
+                "type": "string",
+                "description": "Type of user subscription",
+                "example": "starter"
+              }
+            }
+          }
+        }
+      },
+      "updateAvatarResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "description": "Avatar URL",
+            "properties": {
+              "avatarURL": {
+                "type": "string",
+                "description": "Link to the user's avatar",
+                "example": "https://res.cloudinary.com/dpvkleqce/image/upload/v1674652226/wallet_leopards/zn7ur1gmwynrbmnqgzkj.png"
+              }
+            }
+          }
+        }
+      },
+      "getUserCategoriesResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "description": "Categories list",
+            "properties": {
+              "categories": {
+                "type": "array",
+                "description": "User categories for expenses",
+                "example": [
+                  { "_id": "1", "name": "Main expenses" },
+                  { "_id": "2", "name": "Products" }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "updateSubscriptionResponse": {
+        "type": "object",
+        "properties": {
+          "user": {
+            "type": "object",
+            "description": "User's data'",
+            "properties": {
+              "_id": {
+                "type": "string",
+                "description": "User id",
+                "example": "11a0f1653947d6431e1a0111"
+              },
+              "email": {
+                "type": "string",
+                "description": "User's email",
+                "format": "email"
+              },
+              "subscription": {
+                "type": "string",
+                "description": "Type of user subscription",
+                "example": "pro"
+              }
+            }
+          }
+        }
+      },
+      "reVerificationResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "user": {
+                "type": "object",
+                "description": "User's data",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "description": "User's email",
+                    "format": "email"
+                  },
+                  "verificationToken": {
+                    "type": "string",
+                    "description": "Token for verification",
+                    "example": "1d500a7035cf0304c116e"
+                  }
+                }
+              },
+              "message": {
+                "type": "string",
+                "description": "Message of sending a verification letter",
+                "example": "A verification letter was sent to the email - user@example.com"
+              }
+            }
+          }
+        }
+      },
+      "errorBadRequesResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "integer",
+            "description": "Error status code",
+            "example": "400"
+          },
+          "message": {
+            "type": "string",
+            "description": "Error message",
+            "example": "Bad request"
+          }
+        }
+      },
+      "errorConflictResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "integer",
+            "description": "Error status code",
+            "example": "409"
+          },
+          "message": {
+            "type": "string",
+            "description": "Error message",
+            "example": "User with email - user@example.com, already exist"
+          }
+        }
+      },
+      "errorUnauthorizedResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "integer",
+            "description": "Error status code",
+            "example": "401"
+          },
+          "message": {
+            "type": "string",
+            "description": "Error message",
+            "example": "Not authorized"
+          }
+        }
+      },
+      "errorNotFoundResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "integer",
+            "description": "Error status code",
+            "example": "404"
+          },
+          "message": {
+            "type": "string",
+            "description": "Error message",
+            "example": "Not found"
           }
         }
       }
@@ -226,4 +676,3 @@
     }
   }
 }
-
