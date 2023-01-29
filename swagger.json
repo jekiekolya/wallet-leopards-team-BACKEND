@@ -7,7 +7,10 @@
   },
   "consumes": ["application/json", "multipart/form-data"],
   "produces": ["application/json", "multipart/form-data"],
-  "servers": [{ "url": "http://localhost:3000" }],
+  "servers": [
+    { "url": "http://localhost:3000" },
+    { "url": "https://leaopards-team.onrender.com" }
+  ],
   "tags": [
     {
       "name": "Auth",
@@ -251,16 +254,21 @@
         "tags": ["User"],
         "summary": "Update user avatar",
         "security": [{ "Bearer": [] }],
-        "consumes": "multipart/form-data",
-        "parameters": [
-          {
-            "in": "formData",
-            "name": "upfile",
-            "type": "file",
-            "required": "true",
-            "description": "The file to upload"
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "avatar": {
+                    "type": "string",
+                    "format": "file"
+                  }
+                }
+              }
+            }
           }
-        ],
+        },
         "responses": {
           "200": {
             "description": "Successful operation",
@@ -300,6 +308,17 @@
         "tags": ["User"],
         "summary": "Update user subscription",
         "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "description": "Object with subscription the user wants to change to",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/updateSubscriptionRequest"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "Successful operation",
@@ -328,6 +347,17 @@
       "post": {
         "tags": ["User"],
         "summary": "Resend verify user email (if the previous one was omitted)",
+        "requestBody": {
+          "description": "Object with email to which the re-verification letter should be sent",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/reVerificationRequest"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "Successful operation",
@@ -610,29 +640,6 @@
           }
         }
       },
-      "updateAvatarResponse": {
-        "type": "object",
-        "properties": {
-          "status": {
-            "type": "string",
-            "example": "success"
-          },
-          "code": {
-            "type": "string",
-            "example": "200"
-          },
-          "data": {
-            "type": "object",
-            "properties": {
-              "avatarURL": {
-                "type": "string",
-                "description": "Updated user avatar",
-                "example": "https://res.cloudinary.com/dpvkleqce/image/upload/v1674652226/wallet_leopards/zn7ur1gmwynrbmnqgzkj.png"
-              }
-            }
-          }
-        }
-      },
       "getUserCategoriesResponse": {
         "type": "object",
         "properties": {
@@ -656,6 +663,40 @@
                 ]
               }
             }
+          }
+        }
+      },
+      "updateAvatarResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "success"
+          },
+          "code": {
+            "type": "string",
+            "example": "200"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "avatarURL": {
+                "type": "string",
+                "description": "Updated user avatar",
+                "example": "https://res.cloudinary.com/dpvkleqce/image/upload/v1674652226/wallet_leopards/zn7ur1gmwynrbmnqgzkj.png"
+              }
+            }
+          }
+        }
+      },
+      "updateSubscriptionRequest": {
+        "type": "object",
+        "required": ["subscription"],
+        "properties": {
+          "subscription": {
+            "type": "string",
+            "description": "Subscription selected by the user",
+            "example": "pro"
           }
         }
       },
@@ -695,6 +736,17 @@
                 }
               }
             }
+          }
+        }
+      },
+      "reVerificationRequest": {
+        "type": "object",
+        "required": ["email"],
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "User's email",
+            "format": "email"
           }
         }
       },
