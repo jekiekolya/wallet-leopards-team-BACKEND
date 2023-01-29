@@ -103,11 +103,9 @@ const createEmailMarkup = function (BASE_URL, verificationToken) {
      <tr>
        <td>
         <h2> Confirmation of your mail</h2>
-            <h3>Please, <a  target="_blank" href="${BASE_URL}/api/auth/verify/${verificationToken}">confirm</a> your email</h3>
+            <h3>Please, <a  target="_blank" href="${BASE_URL}/wallet-leopards-team-FRONTEND/signUp/verify/${verificationToken}">confirm</a> your email</h3>
               
   </table>
-     
-  
        
       </div>
     </body>
