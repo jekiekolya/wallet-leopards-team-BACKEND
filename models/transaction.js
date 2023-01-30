@@ -1,6 +1,8 @@
 const { Schema, model } = require('mongoose');
 const { handleMongooseError } = require('../helpers');
 
+const isOnlyLetters = /^[a-zA-Zа-яА-Я ]*$/;
+
 const transactionSchema = new Schema(
   {
     transactionType: {
@@ -18,6 +20,7 @@ const transactionSchema = new Schema(
     },
     comment: {
       type: String,
+      match: isOnlyLetters,
       minlength: 0,
       maxlength: 200,
     },

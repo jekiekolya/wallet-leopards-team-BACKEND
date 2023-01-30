@@ -262,7 +262,8 @@
                 "properties": {
                   "avatar": {
                     "type": "string",
-                    "format": "file"
+                    "format": "binary",
+                    "nullable": true
                   }
                 }
               }
