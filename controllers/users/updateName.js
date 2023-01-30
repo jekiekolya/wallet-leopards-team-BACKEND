@@ -15,7 +15,7 @@ const updateName = async (req, res) => {
       user: {
         _id,
         email,
-        subscription: user.subscription,
+        firstName: user.firstName,
       },
     },
   });

@@ -84,14 +84,13 @@ const verifyUserEmailSchema = Joi.object({
 
 // Schema for update user name
 const updateUserNameSchema = Joi.object({
-  subscription: Joi.string()
-    .valid('starter', 'pro', 'business')
-    .required()
-    .messages({
-      'string.base': `{{#label}} should be a type of string`,
-      'string.empty': `{{#label}} must contain value`,
-      'any.required': `missing field {{#label}}`,
-    }),
+  firstName: Joi.string().trim().min(1).max(12).required().messages({
+    'string.base': `{{#label}} should be a type of string`,
+    'string.empty': `{{#label}} must contain value`,
+    'string.min': `{{#label}} should have a minimum length of 1`,
+    'string.max': `{{#label}} should have a maximum length of 12`,
+    'any.required': `{{#label}} is a required field`,
+  }),
 })
   .required()
   .messages({
