@@ -3,6 +3,8 @@ const bcrypt = require('bcryptjs');
 
 const { handleMongooseError } = require('../helpers');
 
+const totalBalanceRegexp = /\d+([.,]\d{2})?/;
+
 const userSchema = Schema(
   {
     firstName: {
@@ -45,6 +47,7 @@ const userSchema = Schema(
     totalBalance: {
       type: Number,
       default: 0,
+      match: totalBalanceRegexp,
     },
     verify: {
       type: Boolean,
