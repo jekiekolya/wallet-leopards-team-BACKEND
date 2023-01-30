@@ -82,9 +82,26 @@ const verifyUserEmailSchema = Joi.object({
     'any.required': `missing fields`,
   });
 
+// Schema for update user name
+const updateUserNameSchema = Joi.object({
+  subscription: Joi.string()
+    .valid('starter', 'pro', 'business')
+    .required()
+    .messages({
+      'string.base': `{{#label}} should be a type of string`,
+      'string.empty': `{{#label}} must contain value`,
+      'any.required': `missing field {{#label}}`,
+    }),
+})
+  .required()
+  .messages({
+    'any.required': `missing field {{#label}}`,
+  });
+
 module.exports = {
   registerUserSchema,
   loginUserSchema,
   updateUserSubscriptionSchema,
   verifyUserEmailSchema,
+  updateUserNameSchema,
 };
