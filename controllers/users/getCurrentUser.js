@@ -1,5 +1,13 @@
 const getCurrentUser = (req, res) => {
-  const { _id, email, subscription } = req.user;
+  const {
+    _id,
+    firstName,
+    email,
+    avatarURL,
+    categories,
+    totalBalance,
+    subscription,
+  } = req.user;
 
   res.status(200).json({
     status: 'success',
@@ -7,8 +15,12 @@ const getCurrentUser = (req, res) => {
     data: {
       user: {
         _id,
+        firstName,
         email,
+        avatarURL,
+        categories,
         subscription,
+        totalBalance,
       },
     },
   });
