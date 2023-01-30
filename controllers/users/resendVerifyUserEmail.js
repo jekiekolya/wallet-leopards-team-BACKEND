@@ -35,7 +35,7 @@ const resendVerifyUserEmail = async (req, res) => {
   const mail = {
     to: email,
     subject: 'Verification email',
-    text: `Please, confirm your email: ${BASE_URL}/api/users/verify/${verificationToken}`,
+    text: `Please, confirm your email: https://jekiekolya.github.io/wallet-leopards-team-FRONTEND/signUp/verify/${verificationToken}`,
     html: createEmailMarkup(BASE_URL, verificationToken),
   };
   await sendEmail(mail);
