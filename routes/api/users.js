@@ -14,6 +14,7 @@ router.patch(
   ctrlWrapper(ctrl.updateSubscription)
 );
 
+// Update user Avatar
 router.patch(
   '/avatars',
   auth,
@@ -30,5 +31,13 @@ router.post(
 
 // Work with a list of categories
 router.get('/categories', auth, ctrlWrapper(ctrl.getCategoriesList));
+
+// Update user NAme
+router.patch(
+  '/name',
+  auth,
+  validation(userSchema.updateUserNameSchema),
+  ctrlWrapper(ctrl.updateName)
+);
 
 module.exports = router;
