@@ -3,7 +3,6 @@ const uniqid = require('uniqid');
 const { createEmailMarkup } = require('../../helpers');
 
 require('dotenv').config();
-const { BASE_URL } = process.env;
 
 const { User } = require('../../models');
 const { sendEmail } = require('../../helpers');
@@ -36,7 +35,7 @@ const resendVerifyUserEmail = async (req, res) => {
     to: email,
     subject: 'Verification email',
     text: `Please, confirm your email: https://jekiekolya.github.io/wallet-leopards-team-FRONTEND/signUp/verify/${verificationToken}`,
-    html: createEmailMarkup(BASE_URL, verificationToken),
+    html: createEmailMarkup(verificationToken),
   };
   await sendEmail(mail);
 
