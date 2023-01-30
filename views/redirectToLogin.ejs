@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script>
+      var status = '<%- JSON.stringify(status) %>';
+      if (JSON.parse(status) == "verified") {
+        if (confirm("Password create! Do you want LogIn?")) {
+          window.location.href = "http://localhost:3001/wallet-leopards-team-FRONTEND/login";
+        }
+      }
+    </script>
+  </head>
+  <body>
+     <body
+    style="
+      background-color: #e5e5e5;
+      font-family: Calibri, 'Trebuchet MS', sans-serif;
+    "
+  >
+    <div
+      style="
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding-top: 8vh;
+      "
+    >
+      <div
+        style="
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          margin: auto;
+          padding: 25px;
+          background-color: #ffffff;
+          border-radius: 20px;
+          min-width: 380px;
+        "
+      >
+        <h1 style="text-align: center; font-size: 20px">
+          Password created!
+        </h1>
+        
+         <!-- <input type="submit" value="Redirect to LogIn page" href="http://localhost:3001/wallet-leopards-team-FRONTEND/login" 
+         style="
+              cursor: pointer;
+              background: #24cca7;
+              border-radius: 20px;
+              color: #ffffff;
+              padding: 10px 20px;
+              
+              display: flex;
+              align-items: center;
+              text-align: center;
+              justify-content: center;
+              font-family: Calibri, 'Trebuchet MS', sans-serif;
+              font-style: normal;
+              font-weight: 400;
+              font-size: 18px;
+              line-height: 1.5;
+              border: 0;
+            " 
+          /> -->
+      </div>
+     
+    </div>
+  </body>
+</html>

@@ -17,10 +17,8 @@ const formatsLogger = app.get('env') === 'development' ? 'dev' : 'short';
 app.use(logger(formatsLogger));
 app.use(cors());
 app.use(express.json());
-app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  next();
-});
+app.use(express.urlencoded({ extended: false }));
+app.set('view engine', 'ejs');
 
 app.use('/api/auth', authRouter);
 app.use('/api/users', usersRouter);

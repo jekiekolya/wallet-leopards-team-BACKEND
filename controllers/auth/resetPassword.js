@@ -1,25 +1,28 @@
-const { sendEmail } = require('../../helpers');
-const { resetPasswordMarkup } = require('../../helpers');
-// const bcrypt = require('bcryptjs');
-// const jwt = require('jsonwebtoken');
+const { User } = require('../../models');
+const { Unauthorized } = require('http-errors');
+const jwt = require('jsonwebtoken');
+
 const resetPassword = async (req, res) => {
-  const { email } = req.body;
-  // const { SECRET_KEY } = process.env;
+  const { id, token } = req.params;
+  const { SECRET_KEY } = process.env;
 
-  const mail = {
-    to: email,
-    subject: 'PASSWORD RECOVERY',
-    html: resetPasswordMarkup(email),
-  };
-  await sendEmail(mail);
+  const oldUser = await User.findOne({ _id: id });
 
-  res.status(201).json({
-    status: 'success',
-    code: 201,
-    data: {
-      email,
-    },
-  });
+  if (!oldUser) {
+    throw new Unauthorized(`Use not exists!`);
+  }
+
+  const secret = SECRET_KEY + oldUser.password;
+
+  try {
+    const verify = jwt.verify(token, secret);
+    res.render('newPasswordForm', {
+      email: verify.email,
+      status: 'Not Verified',
+    });
+  } catch (error) {
+    res.send('Not verified');
+  }
 };
 
 module.exports = resetPassword;
