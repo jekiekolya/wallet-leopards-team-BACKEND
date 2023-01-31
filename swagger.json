@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "version": "1.0.1",
+    "version": "1.0.2",
     "title": "Wallet API docs",
     "description": "API documentation for project Wallet."
   },
@@ -542,6 +542,51 @@
         }
       }
     },
+    "/api/transactions/statistics": {
+      "get": {
+        "tags": ["Transaction"],
+        "summary": "Get detailed monthly and yearly statistics on user transactions",
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "year",
+            "type": "string",
+            "description": "The year for which statistical data should be obtained",
+            "required": "true"
+          },
+          {
+            "in": "query",
+            "name": "month",
+            "type": "string",
+            "description": "The month for which statistical data should be obtained (from 1 to 12)",
+            "required": "true"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getStatisticsResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authorized (no token provided)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorUnauthorizedResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/categories": {
       "post": {
         "tags": ["Category"],
@@ -753,6 +798,21 @@
                   "categories": {
                     "type": "array",
                     "description": "User categories for expenses",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "_id": {
+                          "type": "string",
+                          "description": "Category id",
+                          "example": "1"
+                        },
+                        "name": {
+                          "type": "string",
+                          "description": "Category name",
+                          "example": "Main expenses"
+                        }
+                      }
+                    },
                     "example": [
                       { "_id": "1", "name": "Main expenses" },
                       { "_id": "2", "name": "Products" }
@@ -833,6 +893,21 @@
                   "categories": {
                     "type": "array",
                     "description": "User categories list for expenses",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "_id": {
+                          "type": "string",
+                          "description": "Category id",
+                          "example": "1"
+                        },
+                        "name": {
+                          "type": "string",
+                          "description": "Category name",
+                          "example": "Main expenses"
+                        }
+                      }
+                    },
                     "example": [
                       { "_id": "1", "name": "Main expenses" },
                       { "_id": "2", "name": "Products" }
@@ -871,6 +946,21 @@
               "categories": {
                 "type": "array",
                 "description": "User categories list for expenses",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "_id": {
+                      "type": "string",
+                      "description": "Category id",
+                      "example": "1"
+                    },
+                    "name": {
+                      "type": "string",
+                      "description": "Category name",
+                      "example": "Main expenses"
+                    }
+                  }
+                },
                 "example": [
                   { "_id": "1", "name": "Main expenses" },
                   { "_id": "2", "name": "Products" }
@@ -1282,6 +1372,134 @@
           }
         ]
       },
+      "getStatisticsResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "success"
+          },
+          "code": {
+            "type": "string",
+            "example": "200"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "data": {
+                "type": "object",
+                "description": "Statistical data for a certain period",
+                "properties": {
+                  "firstName": {
+                    "type": "string",
+                    "description": "New username",
+                    "example": "Leopard"
+                  },
+                  "_id": {
+                    "type": "string",
+                    "description": "User id",
+                    "example": "11a0f1653947d6431e1a0111"
+                  },
+                  "income": {
+                    "type": "number",
+                    "description": "The amount of income for a certain period",
+                    "example": "8000"
+                  },
+                  "expenses": {
+                    "type": "number",
+                    "description": "The amount of expenses for a certain period",
+                    "example": "6000"
+                  },
+                  "profit": {
+                    "type": "number",
+                    "description": "A financial gain, income and expenses difference",
+                    "example": "2000"
+                  },
+                  "balance": {
+                    "type": "number",
+                    "description": "User's final balance",
+                    "example": "12000"
+                  },
+                  "queryDate": {
+                    "type": "object",
+                    "description": "The period (month and year) for which statistical data must be obtained",
+                    "properties": {
+                      "month": {
+                        "type": "string",
+                        "example": "1"
+                      },
+                      "year": {
+                        "type": "string",
+                        "example": "2023"
+                      }
+                    }
+                  },
+                  "queryExpenses": {
+                    "type": "array",
+                    "description": "An array with expenses objects by category for a certain period",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "_id": {
+                          "type": "string",
+                          "description": "Category id",
+                          "example": "1"
+                        },
+                        "name": {
+                          "type": "string",
+                          "description": "Category name",
+                          "example": "Main expenses"
+                        },
+                        "amount": {
+                          "type": "string",
+                          "description": "Expenses amount for this category",
+                          "example": "3500"
+                        }
+                      }
+                    },
+                    "example": [
+                      { "_id": "1", "name": "Main expenses", "amount": "3500" },
+                      { "_id": "2", "name": "Products", "amount": "2500" }
+                    ]
+                  },
+                  "totalExpenses": {
+                    "type": "array",
+                    "description": "An array with expenses objects by category for all time",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "_id": {
+                          "type": "string",
+                          "description": "Category id",
+                          "example": "1"
+                        },
+                        "name": {
+                          "type": "string",
+                          "description": "Category name",
+                          "example": "Main expenses"
+                        },
+                        "amount": {
+                          "type": "string",
+                          "description": "Expenses amount for this category",
+                          "example": "15500"
+                        }
+                      }
+                    },
+                    "example": [
+                      {
+                        "_id": "1",
+                        "name": "Main expenses",
+                        "amount": "15500"
+                      },
+                      { "_id": "2", "name": "Products", "amount": "9000" }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
       "addNewCategoryRequest": {
         "type": "object",
         "required": ["category"],
@@ -1289,7 +1507,7 @@
           "category": {
             "type": "string",
             "description": "Category name",
-            "example": "Сomputer games"
+            "example": "Computer games"
           }
         }
       },
