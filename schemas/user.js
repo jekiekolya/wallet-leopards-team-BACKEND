@@ -51,6 +51,20 @@ const loginUserSchema = Joi.object({
     'any.required': `missing fields`,
   });
 
+const passwordUserSchema = Joi.object({
+  password: Joi.string().trim().min(6).max(12).required().messages({
+    'string.base': `{{#label}} should be a type of string`,
+    'string.empty': `{{#label}} must contain value`,
+    'string.min': `{{#label}} should have a minimum length of 6`,
+    'string.max': `{{#label}} should have a maximum length of 12`,
+    'any.required': `{{#label}} is a required field`,
+  }),
+})
+  .required()
+  .messages({
+    'any.required': `missing fields`,
+  });
+
 // Schema for update subscription
 const updateUserSubscriptionSchema = Joi.object({
   subscription: Joi.string()
@@ -103,4 +117,5 @@ module.exports = {
   updateUserSubscriptionSchema,
   verifyUserEmailSchema,
   updateUserNameSchema,
+  passwordUserSchema,
 };
