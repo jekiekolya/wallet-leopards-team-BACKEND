@@ -19,7 +19,8 @@ const resetPassword = async (req, res) => {
   try {
     jwt.verify(token, secret);
   } catch (error) {
-    res.status(401).json({ message: `Token not valid`, error });
+    res.status(498).json({ message: `Token not valid`, error });
+    return;
   }
 
   const encryptedPassword = await bcrypt.hash(password, 10);
@@ -39,7 +40,6 @@ const resetPassword = async (req, res) => {
     status: 'success',
     code: 201,
     message: `New password created!`,
-    id: user._id,
   });
 };
 

@@ -25,6 +25,10 @@ router.get('/verify/:verificationToken', ctrlWrapper(ctrl.verifyEmail));
 // Reset password
 router.post('/forgot-password', ctrlWrapper(ctrl.forgotPassword));
 
-router.post('/reset-password/:id/:token', ctrlWrapper(ctrl.resetPassword));
+router.post(
+  '/reset-password/:id/:token',
+  validation(userSchema.passwordUserSchema),
+  ctrlWrapper(ctrl.resetPassword)
+);
 
 module.exports = router;

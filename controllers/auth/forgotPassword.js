@@ -1,20 +1,21 @@
-const { Unauthorized } = require('http-errors');
-// const { sendEmail } = require('../../helpers');
+const { sendEmail } = require('../../helpers');
 const { resetPasswordMarkup } = require('../../helpers');
 const { User } = require('../../models');
 const jwt = require('jsonwebtoken');
 
 const forgotPassword = async (req, res) => {
   const { email } = req.body;
+  const { SECRET_KEY, FRONT_URL } = process.env;
+
   const user = await User.findOne({ email });
-  const { SECRET_KEY } = process.env;
 
   if (!user) {
-    res.status(401).json({
+    res.status(404).json({
       status: 'error',
-      code: 401,
+      code: 404,
       message: `User with email: ${email}, not found!`,
     });
+    return;
   }
 
   const secret = SECRET_KEY + user.password;
@@ -22,9 +23,7 @@ const forgotPassword = async (req, res) => {
     expiresIn: '5m',
   });
 
-  const link = `http://localhost:3001/wallet-leopards-team-FRONTEND/create-password?id=${user._id}&token=${token}`;
-
-  console.log('link', link);
+  const link = `${FRONT_URL}/create-password?id=${user._id}&token=${token}`;
 
   const mail = {
     to: email,
@@ -32,7 +31,7 @@ const forgotPassword = async (req, res) => {
     html: resetPasswordMarkup(link),
   };
 
-  // await sendEmail(mail);
+  await sendEmail(mail);
 
   res.status(201).json({
     status: 'success',
