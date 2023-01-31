@@ -1,5 +1,6 @@
 const { Transaction } = require('../../models');
 const { User } = require('../../models');
+const { BadRequest } = require('http-errors');
 
 const userStatistics = async (req, res) => {
   const { _id: owner, firstName } = req.user;
@@ -7,7 +8,12 @@ const userStatistics = async (req, res) => {
 
   const yearsNow = new Date().getFullYear();
   const monthNow = new Date().getMonth();
+
   const { year = `${yearsNow}`, month = `${monthNow + 1}` } = req.query;
+
+  if (month < 1 || month > 12) {
+    throw new BadRequest('Date must be in ISO 8601 date format');
+  }
 
   const allTransaction = await Transaction.find(
     { owner },

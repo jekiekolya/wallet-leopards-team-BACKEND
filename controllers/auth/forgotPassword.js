@@ -30,8 +30,8 @@ const forgotPassword = async (req, res) => {
     subject: 'PASSWORD RECOVERY',
     html: resetPasswordMarkup(link),
   };
-
-  await sendEmail(mail);
+  console.log('link', link);
+  // await sendEmail(mail);
 
   res.status(201).json({
     status: 'success',
