@@ -4,7 +4,6 @@ const logout = require('./logout');
 const verifyEmail = require('./verifyEmail');
 const forgotPassword = require('./forgotPassword');
 const resetPassword = require('./resetPassword');
-const submitPassword = require('./submitPassword');
 
 module.exports = {
   register,
@@ -13,5 +12,4 @@ module.exports = {
   verifyEmail,
   forgotPassword,
   resetPassword,
-  submitPassword,
 };

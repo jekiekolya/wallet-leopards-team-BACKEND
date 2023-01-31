@@ -1,24 +1,28 @@
 const { Unauthorized } = require('http-errors');
-const { sendEmail } = require('../../helpers');
+// const { sendEmail } = require('../../helpers');
 const { resetPasswordMarkup } = require('../../helpers');
 const { User } = require('../../models');
 const jwt = require('jsonwebtoken');
 
 const forgotPassword = async (req, res) => {
   const { email } = req.body;
-  const oldUser = await User.findOne({ email });
-  const { SECRET_KEY, BASE_URL } = process.env;
+  const user = await User.findOne({ email });
+  const { SECRET_KEY } = process.env;
 
-  if (!oldUser) {
-    throw new Unauthorized(`User with email: ${email}, Not Found!`);
+  if (!user) {
+    res.status(401).json({
+      status: 'error',
+      code: 401,
+      message: `User with email: ${email}, not found!`,
+    });
   }
 
-  const secret = SECRET_KEY + oldUser.password;
-  const token = jwt.sign({ email: oldUser.email, id: oldUser._id }, secret, {
-    expiresIn: '55m',
+  const secret = SECRET_KEY + user.password;
+  const token = jwt.sign({ email: user.email, id: user._id }, secret, {
+    expiresIn: '5m',
   });
 
-  const link = `${BASE_URL}/api/auth/reset-password/${oldUser._id}/${token}`;
+  const link = `http://localhost:3001/wallet-leopards-team-FRONTEND/create-password?id=${user._id}&token=${token}`;
 
   console.log('link', link);
 
@@ -30,13 +34,13 @@ const forgotPassword = async (req, res) => {
 
   // await sendEmail(mail);
 
-  res.status(200).json({
+  res.status(201).json({
     status: 'success',
-    code: 200,
+    code: 201,
     message: `Done! We send password reset link to ${email}`,
     data: {
-      email,
-      link,
+      id: user._id,
+      token,
     },
   });
 };

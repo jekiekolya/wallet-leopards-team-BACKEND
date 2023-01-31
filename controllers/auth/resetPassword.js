@@ -1,28 +1,46 @@
 const { User } = require('../../models');
 const { Unauthorized } = require('http-errors');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 const resetPassword = async (req, res) => {
   const { id, token } = req.params;
+  const { password } = req.body;
   const { SECRET_KEY } = process.env;
 
-  const oldUser = await User.findOne({ _id: id });
+  const user = await User.findOne({ _id: id });
 
-  if (!oldUser) {
-    throw new Unauthorized(`Use not exists!`);
+  if (!user) {
+    throw new Unauthorized(`User not exists!`);
   }
 
-  const secret = SECRET_KEY + oldUser.password;
+  const secret = SECRET_KEY + user.password;
 
   try {
-    const verify = jwt.verify(token, secret);
-    res.render('newPasswordForm', {
-      email: verify.email,
-      status: 'Not Verified',
-    });
+    jwt.verify(token, secret);
   } catch (error) {
-    res.send('Not verified');
+    res.status(401).json({ message: `Token not valid`, error });
   }
+
+  const encryptedPassword = await bcrypt.hash(password, 10);
+
+  await User.updateOne(
+    {
+      _id: id,
+    },
+    {
+      $set: {
+        password: encryptedPassword,
+      },
+    }
+  );
+
+  res.status(201).json({
+    status: 'success',
+    code: 201,
+    message: `New password created!`,
+    id: user._id,
+  });
 };
 
 module.exports = resetPassword;
