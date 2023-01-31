@@ -2,6 +2,7 @@ const { Schema, model } = require('mongoose');
 const { handleMongooseError } = require('../helpers');
 
 const isOnlyLetters = /^[a-zA-Zа-яА-Я ]*$/;
+const isEmpty = /[\S\s]+[\S]+/;
 
 const transactionSchema = new Schema(
   {
@@ -20,9 +21,10 @@ const transactionSchema = new Schema(
     },
     comment: {
       type: String,
-      match: isOnlyLetters,
+      match: [isOnlyLetters, isEmpty],
       minlength: 0,
       maxlength: 200,
+      trim: true,
     },
     category: {
       type: Object,
