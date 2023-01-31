@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "version": "1.0.0",
+    "version": "1.0.1",
     "title": "Wallet API docs",
     "description": "API documentation for project Wallet."
   },
@@ -34,8 +34,6 @@
       "post": {
         "tags": ["Auth"],
         "summary": "User registration",
-        "parameters": [],
-        "security": [],
         "requestBody": {
           "description": "Registration's object",
           "required": true,
@@ -85,8 +83,6 @@
       "post": {
         "tags": ["Auth"],
         "summary": "User login",
-        "parameters": [],
-        "security": [],
         "requestBody": {
           "description": "Login object",
           "required": true,
@@ -249,6 +245,56 @@
         }
       }
     },
+    "/api/users/name": {
+      "patch": {
+        "tags": ["User"],
+        "summary": "Update username",
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "description": "Object with name the user wants to change to",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/updateUsernameRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/updateUsernameResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request (not possible to change the firstName to the same one)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorBadRequesResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authorized (no token provided)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorUnauthorizedResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/users/avatars": {
       "patch": {
         "tags": ["User"],
@@ -327,6 +373,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/updateSubscriptionResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request (not possible to change the subscription to the same one)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorBadRequesResponse"
                 }
               }
             }
@@ -436,6 +492,140 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/errorUnauthorizedResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": ["Transaction"],
+        "summary": "Get a list of all transactions",
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "page",
+            "type": "string",
+            "description": "Specifies which pagination page to retrieve (default is 1)",
+            "required": "true"
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "type": "string",
+            "description": "Specifies how many elements to output (default is 10)",
+            "required": "true"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/getAllTransactionsResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authorized (no token provided)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorUnauthorizedResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/categories": {
+      "post": {
+        "tags": ["Category"],
+        "summary": "Add a category for expenses",
+        "security": [{ "Bearer": [] }],
+        "requestBody": {
+          "description": "Object with the category name to add",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/addNewCategoryRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/addNewCategoryResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request (invalid request body)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorBadRequesResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authorized (no token provided)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorUnauthorizedResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/categories/{categoryId}": {
+      "delete": {
+        "tags": ["Category"],
+        "summary": "Remove category from the list",
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "categoryId",
+            "type": "string",
+            "required": "true"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted successfully",
+            "content": {}
+          },
+          "401": {
+            "description": "Not authorized (no token provided)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorUnauthorizedResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "No category with this id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorRemoveCategoryResponse"
                 }
               }
             }
@@ -625,15 +815,38 @@
                     "description": "User id",
                     "example": "11a0f1653947d6431e1a0111"
                   },
+                  "firstName": {
+                    "type": "string",
+                    "description": "Username",
+                    "example": "Mark"
+                  },
                   "email": {
                     "type": "string",
                     "description": "User's email",
                     "format": "email"
                   },
+                  "avatarURL": {
+                    "type": "string",
+                    "description": "Link to the user's avatar",
+                    "example": "https://res.cloudinary.com/dpvkleqce/image/upload/v1674652226/wallet_leopards/zn7ur1gmwynrbmnqgzkj.png"
+                  },
+                  "categories": {
+                    "type": "array",
+                    "description": "User categories list for expenses",
+                    "example": [
+                      { "_id": "1", "name": "Main expenses" },
+                      { "_id": "2", "name": "Products" }
+                    ]
+                  },
                   "subscription": {
                     "type": "string",
                     "description": "Type of user subscription",
                     "example": "starter"
+                  },
+                  "totalBalance": {
+                    "type": "string",
+                    "description": "Total and final user balance",
+                    "example": "15500"
                   }
                 }
               }
@@ -733,6 +946,56 @@
                     "type": "string",
                     "description": "Type of user subscription",
                     "example": "pro"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "updateUsernameRequest": {
+        "type": "object",
+        "required": ["firstName"],
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "description": "New username",
+            "example": "Leopard"
+          }
+        }
+      },
+      "updateUsernameResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "success"
+          },
+          "code": {
+            "type": "string",
+            "example": "200"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "user": {
+                "type": "object",
+                "description": "User data and updated username",
+                "properties": {
+                  "_id": {
+                    "type": "string",
+                    "description": "User id",
+                    "example": "11a0f1653947d6431e1a0111"
+                  },
+                  "email": {
+                    "type": "string",
+                    "description": "User's email",
+                    "format": "email"
+                  },
+                  "firstName": {
+                    "type": "string",
+                    "description": "New username",
+                    "example": "Leopard"
                   }
                 }
               }
@@ -842,12 +1105,12 @@
                   "transactionType": {
                     "type": "boolean",
                     "description": "Transaction type: true - if income, false - if expense",
-                    "example": "true"
+                    "example": "false"
                   },
                   "amount": {
                     "type": "number",
                     "description": "Transaction amount",
-                    "example": "200"
+                    "example": "500"
                   },
                   "date": {
                     "type": "string",
@@ -867,12 +1130,12 @@
                   "owner": {
                     "type": "string",
                     "description": "User id",
-                    "example": "1d500a7035cf0304c000e"
+                    "example": "11a0f1653947d6431e1a0111"
                   },
                   "remainingBalance": {
                     "type": "number",
                     "description": "The user's balance after the transaction",
-                    "example": "1000"
+                    "example": "12000"
                   },
                   "_id": {
                     "type": "string",
@@ -890,6 +1153,173 @@
                     "example": "2023-01-29T02:04:23.470Z"
                   }
                 }
+              }
+            }
+          }
+        }
+      },
+      "getAllTransactionsResponse": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "example": "success"
+            },
+            "code": {
+              "type": "string",
+              "example": "200"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "transactions": {
+                  "type": "object",
+                  "description": "Transaction data",
+                  "properties": {
+                    "_id": {
+                      "type": "string",
+                      "description": "Transaction id",
+                      "example": "1s220s7044cg0304c000e"
+                    },
+                    "transactionType": {
+                      "type": "boolean",
+                      "description": "Transaction type: true - if income, false - if expense",
+                      "example": "false"
+                    },
+                    "amount": {
+                      "type": "number",
+                      "description": "Transaction amount",
+                      "example": "500"
+                    },
+                    "date": {
+                      "type": "string",
+                      "description": "Transaction date in ISO format (with time)",
+                      "example": "2023-01-27T10:33:43.335+00:00"
+                    },
+                    "comment": {
+                      "type": "string",
+                      "description": "Comment about the transaction",
+                      "example": "Donate for victory"
+                    },
+                    "category": {
+                      "type": "object",
+                      "description": "Category object. This field will only be populated if the transaction type is false",
+                      "example": { "_id": "1", "name": "Main expense" }
+                    },
+                    "owner": {
+                      "type": "object",
+                      "description": "User's data",
+                      "properties": {
+                        "_id": {
+                          "type": "string",
+                          "description": "User id",
+                          "example": "11a0f1653947d6431e1a0111"
+                        },
+                        "firstName": {
+                          "type": "string",
+                          "description": "Username",
+                          "example": "Mark"
+                        },
+                        "email": {
+                          "type": "string",
+                          "description": "User's email",
+                          "format": "email"
+                        },
+                        "totalBalance": {
+                          "type": "string",
+                          "description": "Total and final user balance",
+                          "example": "12000"
+                        }
+                      },
+                      "example": {
+                        "_id": "1d500a7035cf0304c000e",
+                        "firstName": "Mark",
+                        "email": "user@example.com",
+                        "totalBalance": "12000"
+                      }
+                    },
+                    "remainingBalance": {
+                      "type": "number",
+                      "description": "The user's balance after the transaction",
+                      "example": "12000"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "example": [
+          {
+            "_id": "1s357s7043ng0304f842a",
+            "transactionType": "true",
+            "amount": "1000",
+            "date": "2023-01-25T12:44:43.335+00:00",
+            "owner": {
+              "_id": "1d500a7035cf0304c000e",
+              "firstName": "Mark",
+              "email": "user@example.com",
+              "totalBalance": "12500"
+            },
+            "remainingBalance": "12500"
+          },
+          {
+            "_id": "1s220s7044cg0304c000e",
+            "transactionType": "false",
+            "amount": "500",
+            "date": "2023-01-27T10:33:43.335+00:00",
+            "comment": "Donate for victory",
+            "category": { "_id": "1", "name": "Main expense" },
+            "owner": {
+              "_id": "1d500a7035cf0304c000e",
+              "firstName": "Mark",
+              "email": "user@example.com",
+              "totalBalance": "12000"
+            },
+            "remainingBalance": "12000"
+          }
+        ]
+      },
+      "addNewCategoryRequest": {
+        "type": "object",
+        "required": ["category"],
+        "properties": {
+          "category": {
+            "type": "string",
+            "description": "Category name",
+            "example": "Сomputer games"
+          }
+        }
+      },
+      "addNewCategoryResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "success"
+          },
+          "code": {
+            "type": "string",
+            "example": "201"
+          },
+          "message": {
+            "type": "string",
+            "example": "New category successfully created"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string",
+                "description": "Category id",
+                "example": "12d60n8876chj5410c567j"
+              },
+              "name": {
+                "type": "string",
+                "description": "Category name",
+                "example": "Computer games"
               }
             }
           }
@@ -952,6 +1382,24 @@
             "type": "string",
             "description": "Error message",
             "example": "Not found"
+          }
+        }
+      },
+      "errorRemoveCategoryResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "failure"
+          },
+          "code": {
+            "type": "integer",
+            "example": "409"
+          },
+          "message": {
+            "type": "string",
+            "description": "Error message",
+            "example": "The category you are trying to delete is not exist"
           }
         }
       }
