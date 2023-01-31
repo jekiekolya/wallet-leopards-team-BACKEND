@@ -26,23 +26,25 @@ const addTransaction = async (req, res) => {
     throw new BadRequest('Maximum of 2 decimal places');
   }
 
-  let remainingBalance = 0;
+  let calculatedBalance = 0;
 
   if (!transactionType && !changeBalance) {
-    remainingBalance = userBalance - amount;
+    calculatedBalance = userBalance - amount;
   }
 
   if (transactionType && !changeBalance) {
-    remainingBalance = userBalance + amount;
+    calculatedBalance = userBalance + amount;
   }
 
   if (!transactionType && changeBalance) {
-    remainingBalance = currentInitBalance - amount;
+    calculatedBalance = currentInitBalance - amount;
   }
 
   if (transactionType && changeBalance) {
-    remainingBalance = currentInitBalance + amount;
+    calculatedBalance = currentInitBalance + amount;
   }
+
+  const remainingBalance = calculatedBalance.toFixed(2);
 
   if (!changeBalance) {
     await User.findByIdAndUpdate(owner, { totalBalance: remainingBalance });

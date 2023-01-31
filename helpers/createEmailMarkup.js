@@ -1,4 +1,4 @@
-const createEmailMarkup = function (BASE_URL, verificationToken) {
+const createEmailMarkup = function (verificationToken) {
   return `<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:v="urn:schemas-microsoft-com:vml" lang="en">
   
   <head><link rel="stylesheet" type="text/css" hs-webfonts="true" href="https://fonts.googleapis.com/css?family=Lato|Lato:i,b,bi">
@@ -102,12 +102,10 @@ const createEmailMarkup = function (BASE_URL, verificationToken) {
   <table role="presentation" border="0" cellpadding="0" cellspacing="10px" style="padding: 30px 30px 30px 60px;">
      <tr>
        <td>
-        <h2> Confirmation of your mail</h2>
-            <h3>Please, <a  target="_blank" href="${BASE_URL}/api/auth/verify/${verificationToken}">confirm</a> your email</h3>
+        <h2> Confirmation</h2>
+            <h3>Please, <a  target="_blank" href="https://jekiekolya.github.io/wallet-leopards-team-FRONTEND/signUp/verify/${verificationToken}">confirm</a> your email</h3>
               
   </table>
-     
-  
        
       </div>
     </body>

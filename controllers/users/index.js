@@ -3,6 +3,7 @@ const updateSubscription = require('./updateSubscription');
 const updateAvatar = require('./updateAvatar');
 const resendVerifyUserEmail = require('./resendVerifyUserEmail');
 const getCategoriesList = require('./getCategoriesList');
+const updateName = require('./updateName');
 
 module.exports = {
   getCurrentUser,
@@ -10,4 +11,5 @@ module.exports = {
   updateAvatar,
   resendVerifyUserEmail,
   getCategoriesList,
+  updateName,
 };
