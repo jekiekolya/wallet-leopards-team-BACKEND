@@ -9,20 +9,18 @@ const userStatistics = async (req, res) => {
   const yearsNow = new Date().getFullYear();
   const monthNow = new Date().getMonth();
 
-  const { year = `${yearsNow}`, month = `${monthNow + 1}` } = req.query;
+  const { year = `${yearsNow}`, month = `${monthNow}` } = req.query;
 
   if (month < 1 || month > 12) {
-    throw new BadRequest('Invalid Date');
+    throw new BadRequest(
+      'Invalid Date! Month can be in the range from 1 to 12.'
+    );
   }
 
-  const allTransaction = await Transaction.find(
-    { owner },
-    ' -updatedAt',
-    {}
-  ).populate('owner', 'firstName email totalBalance');
+  const allTransaction = await Transaction.find({ owner }, ' -updatedAt');
 
-  const startDate = new Date(`${year}-${month}-02`);
-  const endDate = new Date(year, month, 1);
+  const startDate = new Date(year, month - 1, 1, 1);
+  const endDate = new Date(year, month, 1, 0, 59, 59);
 
   const getAllExpensesTransaction = allTransaction.filter(
     item => item.transactionType === false
@@ -71,7 +69,8 @@ const userStatistics = async (req, res) => {
       const id = item.category._id;
       const name = item.category.name;
       const amount = item.amount;
-      const object = { id, name, amount };
+      const color = item.category.color;
+      const object = { id, name, amount, color };
       return object;
     });
 
