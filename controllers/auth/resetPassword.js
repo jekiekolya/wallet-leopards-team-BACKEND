@@ -1,7 +1,7 @@
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 const { User } = require('../../models');
 const { Unauthorized } = require('http-errors');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
 
 const resetPassword = async (req, res) => {
   const { id, token } = req.params;
