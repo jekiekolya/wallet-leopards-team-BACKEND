@@ -1,13 +1,19 @@
 const { Transaction } = require('../../models');
 const { User } = require('../../models');
+const { BadRequest } = require('http-errors');
 
 const userStatistics = async (req, res) => {
   const { _id: owner, firstName } = req.user;
-  const { totalBalance: balance } = await User.findByIdAndUpdate(owner);
+  const { totalBalance } = await User.findByIdAndUpdate(owner);
 
   const yearsNow = new Date().getFullYear();
   const monthNow = new Date().getMonth();
+
   const { year = `${yearsNow}`, month = `${monthNow + 1}` } = req.query;
+
+  if (month < 1 || month > 12) {
+    throw new BadRequest('Invalid Date');
+  }
 
   const allTransaction = await Transaction.find(
     { owner },
@@ -18,26 +24,35 @@ const userStatistics = async (req, res) => {
   const startDate = new Date(`${year}-${month}-02`);
   const endDate = new Date(year, month, 1);
 
-  const transactionFilterByDate = allTransaction.filter(
+  const getAllExpensesTransaction = allTransaction.filter(
+    item => item.transactionType === false
+  );
+
+  const getAllIncomeTransaction = allTransaction.filter(
+    item => item.transactionType === true
+  );
+
+  const getExpensesTransactionPerMonth = allTransaction.filter(
     item => item.date >= startDate && item.date <= endDate
   );
 
-  const expensesPerMonth = transactionFilterByDate.filter(
-    item => item.transactionType === false
-  );
-  const getAllExpenses = allTransaction.filter(
-    item => item.transactionType === false
-  );
-  const allIncomeTransaction = transactionFilterByDate.filter(
+  const getAllIncomeTransactionPerMonth = getExpensesTransactionPerMonth.filter(
     item => item.transactionType === true
   );
+
+  const getAllExpensesTransactionPerMonth =
+    getExpensesTransactionPerMonth.filter(
+      item => item.transactionType === false
+    );
 
   const getTotalAmount = data =>
     data.reduce((acc, transaction) => acc + transaction.amount, 0);
 
-  const expenses = getTotalAmount(expensesPerMonth);
-  const income = getTotalAmount(allIncomeTransaction);
-  const profit = income - expenses;
+  const totalIncome = getTotalAmount(getAllIncomeTransaction);
+  const totalExpenses = getTotalAmount(getAllExpensesTransaction);
+  const incomePerMonth = getTotalAmount(getAllIncomeTransactionPerMonth);
+  const expensesPerMonth = getTotalAmount(getAllExpensesTransactionPerMonth);
+  const balancePerMont = incomePerMonth - expensesPerMonth;
 
   const amountByTransaction = transaction =>
     transaction.reduce((acc, transaction) => {
@@ -51,7 +66,7 @@ const userStatistics = async (req, res) => {
       return acc;
     }, []);
 
-  const expensesByCategory = transaction =>
+  const createCategoryObject = transaction =>
     transaction.map(item => {
       const id = item.category._id;
       const name = item.category.name;
@@ -60,22 +75,26 @@ const userStatistics = async (req, res) => {
       return object;
     });
 
-  const queryExpenses = expensesByCategory(
-    amountByTransaction(expensesPerMonth)
+  const expensesByPeriod = createCategoryObject(
+    amountByTransaction(getAllExpensesTransactionPerMonth)
   );
 
-  const totalExpenses = expensesByCategory(amountByTransaction(getAllExpenses));
+  const allExpensesByCategory = createCategoryObject(
+    amountByTransaction(getAllExpensesTransaction)
+  );
 
   const data = {
     firstName,
-    _id: owner,
-    income,
-    expenses,
-    profit,
-    balance,
-    queryDate: { month, year },
-    queryExpenses,
+    id: owner,
+    incomePerMonth,
+    expensesPerMonth,
+    balancePerMont,
+    totalIncome,
     totalExpenses,
+    totalBalance,
+    searchPeriod: { month, year },
+    expensesByPeriod,
+    allExpensesByCategory,
   };
 
   res.status(200).json({
