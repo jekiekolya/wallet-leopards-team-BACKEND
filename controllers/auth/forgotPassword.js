@@ -1,7 +1,6 @@
-const { sendEmail } = require('../../helpers');
-const { resetPasswordMarkup } = require('../../helpers');
-const { User } = require('../../models');
 const jwt = require('jsonwebtoken');
+const { User } = require('../../models');
+const { sendEmail, resetPasswordMarkup } = require('../../helpers');
 
 const forgotPassword = async (req, res) => {
   const { email } = req.body;
@@ -37,10 +36,6 @@ const forgotPassword = async (req, res) => {
     status: 'success',
     code: 201,
     message: `Done! We send password reset link to ${email}`,
-    data: {
-      id: user._id,
-      token,
-    },
   });
 };
 

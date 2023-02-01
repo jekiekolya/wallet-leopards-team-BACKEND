@@ -46,10 +46,13 @@ const addTransaction = async (req, res) => {
 
   const remainingBalance = calculatedBalance.toFixed(2);
 
+  let totalBalance = null;
   if (!changeBalance) {
-    await User.findByIdAndUpdate(owner, { totalBalance: remainingBalance });
+    totalBalance = remainingBalance;
+    await User.findByIdAndUpdate(owner, { totalBalance });
   } else {
-    await User.findByIdAndUpdate(owner, { totalBalance: userBalance });
+    totalBalance = userBalance;
+    await User.findByIdAndUpdate(owner, { totalBalance });
   }
 
   if (!category) {
@@ -64,6 +67,7 @@ const addTransaction = async (req, res) => {
       code: 201,
       data: {
         transaction: result,
+        totalBalance,
       },
     });
   } else {
@@ -85,6 +89,7 @@ const addTransaction = async (req, res) => {
       code: 201,
       data: {
         transaction: result,
+        totalBalance,
       },
     });
   }
