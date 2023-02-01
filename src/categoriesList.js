@@ -2,52 +2,52 @@ const categoriesList = [
   {
     _id: '1',
     name: 'Main expenses',
-    color: '#0f0f70',
+    color: '#FED057',
   },
   {
     _id: '2',
     name: 'Products',
-    color: '#0aa8c1',
+    color: '#FFD8D0',
   },
   {
     _id: '3',
     name: 'Car',
-    color: '#0e6658',
+    color: '#FD9498',
   },
   {
     _id: '4',
     name: 'Self care',
-    color: '#8a9ff2',
+    color: '#C5BAFF',
   },
   {
     _id: '5',
     name: 'Child care',
-    color: '#79fd41',
+    color: '#6E78E8',
   },
   {
     _id: '6',
     name: 'Household products',
-    color: '#690a70',
+    color: '#4A56E2',
   },
   {
     _id: '7',
     name: 'Education',
-    color: '#dde90e',
+    color: '#81E1FF',
   },
   {
     _id: '8',
     name: 'Leisure',
-    color: '#9dcab1',
+    color: '#24CCA7',
   },
   {
     _id: '9',
     name: 'Entertainment',
-    color: '#87bb55',
+    color: '#F8E8C1',
   },
   {
     _id: '10',
     name: 'Other expenses',
-    color: '#ca456e',
+    color: '#00AD84',
   },
 ];
 
