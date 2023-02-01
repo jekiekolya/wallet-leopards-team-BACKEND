@@ -1,5 +1,6 @@
 const { User } = require('../../models');
 const uniqid = require('uniqid');
+const generageRandomHexColor = require('../../helpers/generateRandomHexColor');
 
 const addCategory = async (req, res) => {
   const { category } = req.body;
@@ -24,7 +25,11 @@ const addCategory = async (req, res) => {
     });
     return;
   }
-  const newCategory = { _id: uniqid(), name: trimCategory };
+  const newCategory = {
+    _id: uniqid(),
+    name: trimCategory,
+    color: generageRandomHexColor(),
+  };
   const update = [...categories, newCategory];
 
   const result = await User.findByIdAndUpdate(
