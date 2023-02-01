@@ -7,9 +7,9 @@ const addCategory = async (req, res) => {
   const trimCategory = category.trim();
 
   if (trimCategory === '') {
-    res.status(409).json({
+    res.status(400).json({
       status: 'failure',
-      code: 409,
+      code: 400,
       message: 'The category is not allowed to be empty',
     });
     return;
