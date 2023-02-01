@@ -10,8 +10,6 @@ const {
 const { userSchema } = require('../../schemas');
 const { auth: ctrl } = require('../../controllers');
 
-const { BASE_URL } = process.env;
-
 router.post(
   '/register',
   validation(userSchema.registerUserSchema),
@@ -52,22 +50,13 @@ router.get(
   })
 );
 
-// Google callback processing
-router.get('/login/success', ctrl.googleAuth);
-
-router.get('/login/failure', ctrl.failGoogleAuth);
-
-// (there were redirects to the frontend)
-const successLink = `${BASE_URL}/api/auth/login/success`;
-const failureLink = `${BASE_URL}/api/auth/login/failure`;
-
 // Google callback
 router.get(
   '/google/callback',
   passport.authenticate('google', {
-    successRedirect: successLink,
-    failureRedirect: failureLink,
-  })
+    session: false,
+  }),
+  ctrlWrapper(ctrl.googleAuth)
 );
 
 module.exports = router;
