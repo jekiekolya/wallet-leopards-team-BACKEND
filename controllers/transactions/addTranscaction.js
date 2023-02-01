@@ -10,7 +10,16 @@ const addTransaction = async (req, res) => {
     changeBalance,
   } = req.user;
 
-  const { transactionType, category, amount } = req.body;
+  const { transactionType, category, amount, date } = req.body;
+
+  const dateNow = new Date();
+
+  const currentDate = dateNow.getTime();
+  const transactionDate = new Date(date);
+
+  if (transactionDate > currentDate) {
+    throw new BadRequest('Cannot select future date');
+  }
 
   if (!transactionType && !category) {
     throw new BadRequest('Please choose the costs category');
@@ -44,7 +53,7 @@ const addTransaction = async (req, res) => {
     calculatedBalance = currentInitBalance + amount;
   }
 
-  const remainingBalance = calculatedBalance.toFixed(2);
+  const remainingBalance = Number(calculatedBalance.toFixed(2));
 
   let totalBalance = null;
   if (!changeBalance) {
