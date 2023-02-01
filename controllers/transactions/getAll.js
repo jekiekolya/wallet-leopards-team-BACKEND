@@ -5,10 +5,18 @@ const getAll = async (req, res) => {
   const { page = 1, limit = 10 } = req.query;
   const skip = (page - 1) * limit;
 
-  const result = await Transaction.find({ owner }, '-createdAt -updatedAt', {
-    skip,
-    limit,
-  }).populate('owner', 'firstName email totalBalance');
+  const allTransactions = await Transaction.find(
+    { owner },
+    '-createdAt -updatedAt',
+    {
+      skip,
+      limit,
+    }
+  ).populate('owner', 'firstName email totalBalance');
+
+  const result = [...allTransactions].reverse().sort(function (a, b) {
+    return Number(Date.parse(b.date)) - Number(Date.parse(a.date));
+  });
 
   res.json({
     status: 'success',
