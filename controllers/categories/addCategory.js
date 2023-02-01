@@ -20,7 +20,7 @@ const addCategory = async (req, res) => {
     res.status(409).json({
       status: 'failure',
       code: 409,
-      message: 'The category you are trying to add is already exists',
+      message: 'The category you are trying to add already exists',
     });
     return;
   }
