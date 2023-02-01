@@ -1,7 +1,8 @@
 const { Schema, model } = require('mongoose');
 const { handleMongooseError } = require('../helpers');
 
-const isOnlyLetters = /^[a-zA-Zа-яА-Я ]*$/;
+// const isOnlyLetters = /^[a-zA-Zа-яА-Я ]*$/;
+const isOnlyLetters = /(^[а-яА-ЯёЁa-zA-Z ]+$)/u;
 const isEmpty = /[\S\s]+[\S]+/;
 
 const transactionSchema = new Schema(

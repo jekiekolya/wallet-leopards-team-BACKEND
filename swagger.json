@@ -1243,6 +1243,11 @@
                     "example": "2023-01-29T02:04:23.470Z"
                   }
                 }
+              },
+              "totalBalance": {
+                "type": "string",
+                "description": "Total and final user balance",
+                "example": "12000"
               }
             }
           }
