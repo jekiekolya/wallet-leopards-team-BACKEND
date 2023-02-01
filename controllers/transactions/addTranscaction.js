@@ -66,9 +66,12 @@ const addTransaction = async (req, res) => {
     await User.findByIdAndUpdate(owner, { totalBalance });
   }
 
+  const formatAmount = formatNumber(amount);
+
   if (!category) {
     const result = await Transaction.create({
       ...req.body,
+      amount: formatAmount,
       remainingBalance,
       owner,
     });
@@ -90,6 +93,7 @@ const addTransaction = async (req, res) => {
 
     const result = await Transaction.create({
       ...req.body,
+      amount: formatAmount,
       category: isCategory,
       remainingBalance,
       owner,
