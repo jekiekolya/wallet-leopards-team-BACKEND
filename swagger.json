@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "version": "1.0.2",
+    "version": "1.0.3",
     "title": "Wallet API docs",
     "description": "API documentation for project Wallet."
   },
@@ -1397,35 +1397,45 @@
                 "properties": {
                   "firstName": {
                     "type": "string",
-                    "description": "New username",
-                    "example": "Leopard"
+                    "description": "Username",
+                    "example": "Mark"
                   },
                   "_id": {
                     "type": "string",
                     "description": "User id",
                     "example": "11a0f1653947d6431e1a0111"
                   },
-                  "income": {
+                  "incomePerMonth": {
                     "type": "number",
                     "description": "The amount of income for a certain period",
                     "example": "8000"
                   },
-                  "expenses": {
+                  "expensesPerMonth": {
                     "type": "number",
                     "description": "The amount of expenses for a certain period",
                     "example": "6000"
                   },
-                  "profit": {
+                  "balancePerMont": {
                     "type": "number",
-                    "description": "A financial gain, income and expenses difference",
+                    "description": "A financial gain, income and expenses difference for a certain period",
                     "example": "2000"
                   },
-                  "balance": {
+                  "totalIncome": {
+                    "type": "number",
+                    "description": "Income for all time",
+                    "example": "44000"
+                  },
+                  "totalExpenses": {
+                    "type": "number",
+                    "description": "Expenses for the whole time",
+                    "example": "28000"
+                  },
+                  "totalBalance": {
                     "type": "number",
                     "description": "User's final balance",
-                    "example": "12000"
+                    "example": "16000"
                   },
-                  "queryDate": {
+                  "searchPeriod": {
                     "type": "object",
                     "description": "The period (month and year) for which statistical data must be obtained",
                     "properties": {
@@ -1439,7 +1449,7 @@
                       }
                     }
                   },
-                  "queryExpenses": {
+                  "expensesByPeriod": {
                     "type": "array",
                     "description": "An array with expenses objects by category for a certain period",
                     "items": {
@@ -1467,7 +1477,7 @@
                       { "_id": "2", "name": "Products", "amount": "2500" }
                     ]
                   },
-                  "totalExpenses": {
+                  "allExpensesByCategory": {
                     "type": "array",
                     "description": "An array with expenses objects by category for all time",
                     "items": {
@@ -1493,10 +1503,10 @@
                     "example": [
                       {
                         "_id": "1",
-                        "name": "Main expenses",
+                        "name": "Products",
                         "amount": "15500"
                       },
-                      { "_id": "2", "name": "Products", "amount": "9000" }
+                      { "_id": "3", "name": "Car", "amount": "3000" }
                     ]
                   }
                 }

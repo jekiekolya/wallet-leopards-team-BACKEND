@@ -1,6 +1,8 @@
 const { Transaction, User } = require('../../models');
 const { BadRequest } = require('http-errors');
 
+const { formatNumber } = require('../../helpers');
+
 const addTransaction = async (req, res) => {
   const {
     _id: owner,
@@ -53,14 +55,14 @@ const addTransaction = async (req, res) => {
     calculatedBalance = currentInitBalance + amount;
   }
 
-  const remainingBalance = Number(calculatedBalance.toFixed(2));
+  const remainingBalance = formatNumber(Number(calculatedBalance));
 
   let totalBalance = null;
   if (!changeBalance) {
-    totalBalance = remainingBalance;
+    totalBalance = formatNumber(remainingBalance);
     await User.findByIdAndUpdate(owner, { totalBalance });
   } else {
-    totalBalance = userBalance;
+    totalBalance = formatNumber(userBalance);
     await User.findByIdAndUpdate(owner, { totalBalance });
   }
 
