@@ -1491,41 +1491,49 @@
                       "example": "12000"
                     }
                   }
+                },
+                "transactionsCount": {
+                  "type": "integer",
+                  "description": "Number of all created user transactions",
+                  "example": "23"
                 }
               }
             }
           }
         },
-        "example": [
-          {
-            "_id": "1s357s7043ng0304f842a",
-            "transactionType": "true",
-            "amount": "1000",
-            "date": "2023-01-25T12:44:43.335+00:00",
-            "owner": {
-              "_id": "1d500a7035cf0304c000e",
-              "firstName": "Mark",
-              "email": "user@example.com",
-              "totalBalance": "12500"
+        "example": {
+          "transactions": [
+            {
+              "_id": "1s357s7043ng0304f842a",
+              "transactionType": "true",
+              "amount": "1000",
+              "date": "2023-01-25T12:44:43.335+00:00",
+              "owner": {
+                "_id": "1d500a7035cf0304c000e",
+                "firstName": "Mark",
+                "email": "user@example.com",
+                "totalBalance": "12500"
+              },
+              "remainingBalance": "12500"
             },
-            "remainingBalance": "12500"
-          },
-          {
-            "_id": "1s220s7044cg0304c000e",
-            "transactionType": "false",
-            "amount": "500",
-            "date": "2023-01-27T10:33:43.335+00:00",
-            "comment": "Donate for victory",
-            "category": { "_id": "1", "name": "Main expense" },
-            "owner": {
-              "_id": "1d500a7035cf0304c000e",
-              "firstName": "Mark",
-              "email": "user@example.com",
-              "totalBalance": "12000"
-            },
-            "remainingBalance": "12000"
-          }
-        ]
+            {
+              "_id": "1s220s7044cg0304c000e",
+              "transactionType": "false",
+              "amount": "500",
+              "date": "2023-01-27T10:33:43.335+00:00",
+              "comment": "Donate for victory",
+              "category": { "_id": "1", "name": "Main expense" },
+              "owner": {
+                "_id": "1d500a7035cf0304c000e",
+                "firstName": "Mark",
+                "email": "user@example.com",
+                "totalBalance": "12000"
+              },
+              "remainingBalance": "12000"
+            }
+          ],
+          "transactionsCount": "23"
+        }
       },
       "getStatisticsResponse": {
         "type": "object",
