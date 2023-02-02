@@ -1,5 +1,6 @@
+const jwt = require('jsonwebtoken');
+
 const { Conflict } = require('http-errors');
-const uniqid = require('uniqid');
 
 const { categoriesList } = require('../../src');
 const { createEmailMarkup } = require('../../helpers');
@@ -8,8 +9,13 @@ require('dotenv').config();
 const { User } = require('../../models');
 const { sendEmail } = require('../../helpers');
 
+const { SECRET_KEY } = process.env;
+
 const register = async (req, res) => {
   const { firstName, email, password } = req.body;
+  const { _id: id } = req.user;
+  const payload = {id}
+
   const user = await User.findOne({ email });
 
   // Checking if user already exist
@@ -22,7 +28,7 @@ const register = async (req, res) => {
     'https://res.cloudinary.com/dpvkleqce/image/upload/v1674652226/wallet_leopards/zn7ur1gmwynrbmnqgzkj.png';
 
   // Create verificationToken user
-  const verificationToken = uniqid();
+  const verificationToken = jwt.sign(payload, SECRET_KEY, { expiresIn: '23h' });
 
   // Create user categories list
   const categories = [...categoriesList];
