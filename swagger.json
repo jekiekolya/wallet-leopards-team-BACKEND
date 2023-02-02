@@ -190,7 +190,7 @@
         }
       }
     },
-    "/reset-password/{id}/{token}": {
+    "/api/auth/reset-password/{id}/{token}": {
       "post": {
         "tags": ["Auth"],
         "summary": "Make a request to reset the current user password and create a new one",
