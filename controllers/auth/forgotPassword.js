@@ -13,9 +13,9 @@ const forgotPassword = async (req, res) => {
     throw new NotFound(`User with email: ${email}, not found!`);
   }
 
-  if (!user.verify) {
-    throw new Unauthorized(`Email: ${email} not verified!`);
-  }
+  // if (!user.verify) {
+  //   throw new Unauthorized(`Email: ${email} not verified!`);
+  // }
 
   const secret = SECRET_KEY + user.password;
   const token = jwt.sign({ email: user.email, id: user._id }, secret, {
@@ -30,8 +30,8 @@ const forgotPassword = async (req, res) => {
     html: resetPasswordMarkup(link),
   };
 
-  await sendEmail(mail);
-
+  // await sendEmail(mail);
+  console.log('mail', mail);
   res.status(201).json({
     status: 'success',
     code: 201,
