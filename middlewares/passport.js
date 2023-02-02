@@ -57,7 +57,6 @@ const googleCallback = async (
       avatarURL,
       categories,
       verify: true,
-      verificationToken: 'null',
     });
 
     return done(null, newUser);

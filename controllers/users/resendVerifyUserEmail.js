@@ -1,24 +1,18 @@
+const jwt = require('jsonwebtoken');
 const { NotFound, Conflict } = require('http-errors');
-const uniqid = require('uniqid');
 const { createEmailMarkup } = require('../../helpers');
 
 require('dotenv').config();
+const { SECRET_KEY } = process.env;
 
 const { User } = require('../../models');
 const { sendEmail } = require('../../helpers');
 
 const resendVerifyUserEmail = async (req, res) => {
   const { email } = req.body;
-  // Create verificationToken user
-  const verificationToken = uniqid();
-  const user = await User.findOneAndUpdate(
-    req.body,
-    { verificationToken },
-    {
-      new: true,
-      runValidators: true,
-    }
-  );
+
+  // Find user by email
+  const user = await User.findOne({ email });
 
   // Checking if user appear
   if (!user) {
@@ -29,6 +23,10 @@ const resendVerifyUserEmail = async (req, res) => {
   if (user.verify) {
     throw new Conflict(`User with email - ${email}, already verified`);
   }
+
+  // Create verificationToken user
+  const payload = { id: user._id };
+  const verificationToken = jwt.sign(payload, SECRET_KEY, { expiresIn: '23h' });
 
   // Send email for verification
   const mail = {
@@ -45,9 +43,9 @@ const resendVerifyUserEmail = async (req, res) => {
     data: {
       user: {
         email,
-        verificationToken,
       },
       message: `A verification letter was sent to the email - ${email}`,
+      verificationToken,
     },
   });
 };
