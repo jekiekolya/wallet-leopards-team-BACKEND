@@ -1,25 +1,18 @@
 const { User } = require('../../models');
+const { Conflict } = require('http-errors');
+
 const removeCategory = async (req, res) => {
   const { categoryId } = req.params;
   const { _id: owner, categories } = req.user;
 
   if (categoryId === '10') {
-    res.status(403).json({
-      status: 'failure',
-      code: 403,
-      message: 'You can not delete "Other expenses" category',
-    });
-    return;
+    throw new Conflict('You can not delete "Other expenses" category');
   }
 
   const checkCategories = categories.find(item => item._id === categoryId);
+
   if (!checkCategories) {
-    res.status(409).json({
-      status: 'failure',
-      code: 409,
-      message: 'The category you are trying to delete not exists',
-    });
-    return;
+    throw new Conflict('The category you are trying to delete not exists');
   }
 
   const update = [...categories].filter(item => {

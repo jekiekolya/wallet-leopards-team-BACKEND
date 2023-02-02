@@ -1,5 +1,6 @@
 const { User } = require('../../models');
 const uniqid = require('uniqid');
+const { Conflict, BadRequest } = require('http-errors');
 const generageRandomHexColor = require('../../helpers/generateRandomHexColor');
 
 const addCategory = async (req, res) => {
@@ -8,23 +9,15 @@ const addCategory = async (req, res) => {
   const trimCategory = category.trim();
 
   if (trimCategory === '') {
-    res.status(400).json({
-      status: 'failure',
-      code: 400,
-      message: 'The category is not allowed to be empty',
-    });
-    return;
+    throw new BadRequest('The category is not allowed to be empty');
   }
 
   const checkCategories = categories.find(item => item.name === trimCategory);
+
   if (checkCategories) {
-    res.status(409).json({
-      status: 'failure',
-      code: 409,
-      message: 'The category you are trying to add already exists',
-    });
-    return;
+    throw new Conflict('The category you are trying to add already exists');
   }
+
   const newCategory = {
     _id: uniqid(),
     name: trimCategory,
@@ -32,7 +25,7 @@ const addCategory = async (req, res) => {
   };
   const update = [...categories, newCategory];
 
-  const result = await User.findByIdAndUpdate(
+  await User.findByIdAndUpdate(
     owner,
     { categories: update },
     {
