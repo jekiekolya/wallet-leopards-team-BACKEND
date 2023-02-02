@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const { User } = require('../../models');
-const { Unauthorized } = require('http-errors');
+const { Unauthorized, Forbidden } = require('http-errors');
 
 const resetPassword = async (req, res) => {
   const { id, token } = req.params;
@@ -19,8 +19,7 @@ const resetPassword = async (req, res) => {
   try {
     jwt.verify(token, secret);
   } catch (error) {
-    res.status(498).json({ message: `Token not valid`, error });
-    return;
+    throw new Forbidden(`Invalid token`);
   }
 
   const encryptedPassword = await bcrypt.hash(password, 10);

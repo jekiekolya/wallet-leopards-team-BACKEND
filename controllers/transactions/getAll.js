@@ -5,6 +5,8 @@ const getAll = async (req, res) => {
   const { page = 1, limit = 10 } = req.query;
   const skip = (page - 1) * limit;
 
+  const transactionsCount = await Transaction.find({ owner }).count();
+
   const allTransactions = await Transaction.find(
     { owner },
     '-createdAt -updatedAt',
@@ -21,6 +23,7 @@ const getAll = async (req, res) => {
     code: 200,
     data: {
       transactions: allTransactions,
+      transactionsCount,
     },
   });
 };
