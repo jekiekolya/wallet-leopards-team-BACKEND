@@ -1,6 +1,7 @@
 const Joi = require('joi');
 
-const isOnlyLetters = /^[а-яА-Яa-zA-Z ]*$/;
+// const isOnlyLetters = /^[а-яА-Яa-zA-Z ]*$/;
+const isOnlyLetters = /(^[а-яА-ЯёЁa-zA-Z ]+$)/u;
 const isEmpty = /[\S\s]+[\S]+/;
 
 const addSchema = Joi.object({

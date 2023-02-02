@@ -1,6 +1,8 @@
 const { Transaction, User } = require('../../models');
 const { BadRequest } = require('http-errors');
 
+const { formatNumber, formatDate } = require('../../helpers');
+
 const addTransaction = async (req, res) => {
   const {
     _id: owner,
@@ -14,10 +16,10 @@ const addTransaction = async (req, res) => {
 
   const dateNow = new Date();
 
-  const currentDate = dateNow.getTime();
-  const transactionDate = new Date(date);
+  const currentDate = formatDate(dateNow);
+  const transactionDate = new Date(date.toLocaleString());
 
-  if (transactionDate > currentDate) {
+  if (transactionDate.getTime() > currentDate.getTime()) {
     throw new BadRequest('Cannot select future date');
   }
 
@@ -53,20 +55,23 @@ const addTransaction = async (req, res) => {
     calculatedBalance = currentInitBalance + amount;
   }
 
-  const remainingBalance = Number(calculatedBalance.toFixed(2));
+  const remainingBalance = formatNumber(Number(calculatedBalance));
 
   let totalBalance = null;
   if (!changeBalance) {
-    totalBalance = remainingBalance;
+    totalBalance = formatNumber(remainingBalance);
     await User.findByIdAndUpdate(owner, { totalBalance });
   } else {
-    totalBalance = userBalance;
+    totalBalance = formatNumber(userBalance);
     await User.findByIdAndUpdate(owner, { totalBalance });
   }
+
+  const formatAmount = formatNumber(amount);
 
   if (!category) {
     const result = await Transaction.create({
       ...req.body,
+      amount: formatAmount,
       remainingBalance,
       owner,
     });
@@ -88,6 +93,7 @@ const addTransaction = async (req, res) => {
 
     const result = await Transaction.create({
       ...req.body,
+      amount: formatAmount,
       category: isCategory,
       remainingBalance,
       owner,

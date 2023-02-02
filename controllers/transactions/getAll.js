@@ -12,17 +12,15 @@ const getAll = async (req, res) => {
       skip,
       limit,
     }
-  ).populate('owner', 'firstName email totalBalance');
-
-  const result = [...allTransactions].reverse().sort(function (a, b) {
-    return Number(Date.parse(b.date)) - Number(Date.parse(a.date));
-  });
+  )
+    .sort({ date: -1 })
+    .populate('owner', 'firstName email totalBalance');
 
   res.json({
     status: 'success',
     code: 200,
     data: {
-      transactions: result,
+      transactions: allTransactions,
     },
   });
 };
