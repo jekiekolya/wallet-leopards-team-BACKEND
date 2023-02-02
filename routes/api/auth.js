@@ -1,7 +1,12 @@
 const express = require('express');
 const router = express.Router();
 
-const { validation, ctrlWrapper, auth } = require('../../middlewares');
+const {
+  validation,
+  ctrlWrapper,
+  auth,
+  passport,
+} = require('../../middlewares');
 const { userSchema } = require('../../schemas');
 const { auth: ctrl } = require('../../controllers');
 
@@ -33,6 +38,25 @@ router.post(
   '/reset-password/:id/:token',
   validation(userSchema.passwordUserSchema),
   ctrlWrapper(ctrl.resetPassword)
+);
+
+// Google authorization
+
+// Google authorization request that should come from the frontend
+router.get(
+  '/google',
+  passport.authenticate('google', {
+    scope: ['email', 'profile'],
+  })
+);
+
+// Google callback
+router.get(
+  '/google/callback',
+  passport.authenticate('google', {
+    session: false,
+  }),
+  ctrlWrapper(ctrl.googleAuth)
 );
 
 module.exports = router;

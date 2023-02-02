@@ -8,18 +8,15 @@ const checkTransactionDate = async (req, res, next) => {
   const transactionsByDate = await Transaction.find({
     owner,
     date: { $gt: date },
-  });
+  }).sort({ date: 1 });
 
   if (transactionsByDate.length > 0) {
-    const inAscendingDate = transactionsByDate.sort(
-      (firstDate, secondDate) => firstDate.date - secondDate.date
-    );
+    const tx = transactionsByDate[0];
+    const newInitBalance = tx.transactionType
+      ? tx.remainingBalance - tx.amount
+      : tx.remainingBalance + tx.amount;
 
-    const newInitBalance = inAscendingDate[0].transactionType
-      ? inAscendingDate[0].remainingBalance - inAscendingDate[0].amount
-      : inAscendingDate[0].remainingBalance + inAscendingDate[0].amount;
-
-    const updateReqUser = inAscendingDate.map(async it => {
+    const updateReqUser = transactionsByDate.map(async it => {
       const expenseBalance = it.remainingBalance + it.amount;
       const incomeBalance = it.remainingBalance - it.amount;
 

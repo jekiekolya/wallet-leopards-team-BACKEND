@@ -4,6 +4,7 @@ const isValidId = require('./validationId');
 const auth = require('./auth');
 const upload = require('./upload');
 const checkTransactionDate = require('./checkTransactionsDate');
+const passport = require('./passport');
 
 module.exports = {
   validation,
@@ -12,4 +13,5 @@ module.exports = {
   auth,
   upload,
   checkTransactionDate,
+  passport,
 };
