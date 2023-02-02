@@ -61,7 +61,7 @@ const userStatistics = async (req, res) => {
       const sameTransaction = acc.find(element => element.category._id === id);
 
       if (sameTransaction !== undefined)
-        sameTransaction.amount += transaction.amount;
+        sameTransaction.amount += formatNumber(transaction.amount);
       else acc.push(transaction);
 
       return acc;
