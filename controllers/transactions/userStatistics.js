@@ -1,11 +1,11 @@
 const { Transaction } = require('../../models');
 const { User } = require('../../models');
 const { BadRequest } = require('http-errors');
+const formatNumber = require('../../helpers/formatNumber');
 
 const userStatistics = async (req, res) => {
   const { _id: owner, firstName } = req.user;
   const { totalBalance } = await User.findByIdAndUpdate(owner);
-
   const yearsNow = new Date().getFullYear();
   const monthNow = new Date().getMonth();
 
@@ -44,7 +44,10 @@ const userStatistics = async (req, res) => {
     );
 
   const getTotalAmount = data =>
-    data.reduce((acc, transaction) => acc + transaction.amount, 0);
+    data.reduce(
+      (acc, transaction) => acc + formatNumber(transaction.amount),
+      0
+    );
 
   const totalIncome = getTotalAmount(getAllIncomeTransaction);
   const totalExpenses = getTotalAmount(getAllExpensesTransaction);
