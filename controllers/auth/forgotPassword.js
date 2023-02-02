@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const { User } = require('../../models');
 const { sendEmail, resetPasswordMarkup } = require('../../helpers');
-const { NotFound } = require('http-errors');
+const { NotFound, Forbidden } = require('http-errors');
 
 const forgotPassword = async (req, res) => {
   const { email } = req.body;
@@ -10,7 +10,11 @@ const forgotPassword = async (req, res) => {
   const user = await User.findOne({ email });
 
   if (!user) {
-    throw new NotFound(`User with email: ${email}, not found!`);
+    throw new NotFound('User not found');
+  }
+
+  if (!user.verify) {
+    throw new Forbidden(`Email: ${email} not verified!`);
   }
 
   const secret = SECRET_KEY + user.password;
