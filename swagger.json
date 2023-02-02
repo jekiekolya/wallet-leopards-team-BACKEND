@@ -151,6 +151,98 @@
         }
       }
     },
+    "/api/auth/forgot-password": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Make a request to change (reset) the current user password",
+        "requestBody": {
+          "description": "Object with user email",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/forgotPasswordRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/forgotPasswordResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User with this email not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorNotFoundResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/reset-password/{id}/{token}": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Make a request to reset the current user password and create a new one",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "type": "string",
+            "required": "true"
+          },
+          {
+            "in": "path",
+            "name": "token",
+            "type": "string",
+            "required": "true"
+          }
+        ],
+        "requestBody": {
+          "description": "Object with new user password",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/resetPasswordRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/resetPasswordResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authorized (no token provided)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorUnauthorizedResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/auth/verify/{verificationToken}": {
       "get": {
         "tags": ["Auth"],
@@ -826,6 +918,64 @@
                 "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI1ZmMyMDg1YmQwOTM2NTI4MTA3Y2UyNzQiLCJzaWQiOiI1ZmMyZDJmY2UxZDIwNTA2NzAyYmRkMjIiLCJpYXQiOjE2MDY2MDM1MTYsImV4cCI6MTYwNjYwNzExNn0.rJ_QjU4KvA76H96RHsvOBChK0Vjbd0NmqjMxdQVJIXA"
               }
             }
+          }
+        }
+      },
+      "forgotPasswordRequest": {
+        "type": "object",
+        "required": ["email"],
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "User email",
+            "format": "email"
+          }
+        }
+      },
+      "forgotPasswordResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "success"
+          },
+          "code": {
+            "type": "integer",
+            "example": "201"
+          },
+          "message": {
+            "type": "string",
+            "description": "Success message",
+            "example": "Done! We send password reset link to user@example.com"
+          }
+        }
+      },
+      "resetPasswordRequest": {
+        "type": "object",
+        "required": ["password"],
+        "properties": {
+          "password": {
+            "type": "string",
+            "description": "New user password",
+            "example": "mark1098"
+          }
+        }
+      },
+      "resetPasswordResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "success"
+          },
+          "code": {
+            "type": "integer",
+            "example": "201"
+          },
+          "message": {
+            "type": "string",
+            "description": "Success message",
+            "example": "New password created!"
           }
         }
       },

@@ -1,7 +1,7 @@
 const { Transaction, User } = require('../../models');
 const { BadRequest } = require('http-errors');
 
-const { formatNumber } = require('../../helpers');
+const { formatNumber, formatDate } = require('../../helpers');
 
 const addTransaction = async (req, res) => {
   const {
@@ -16,10 +16,10 @@ const addTransaction = async (req, res) => {
 
   const dateNow = new Date();
 
-  const currentDate = dateNow.getTime();
-  const transactionDate = new Date(date);
+  const currentDate = formatDate(dateNow);
+  const transactionDate = new Date(date.toLocaleString());
 
-  if (transactionDate > currentDate) {
+  if (transactionDate.getTime() > currentDate.getTime()) {
     throw new BadRequest('Cannot select future date');
   }
 
