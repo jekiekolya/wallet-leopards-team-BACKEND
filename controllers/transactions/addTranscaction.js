@@ -17,7 +17,7 @@ const addTransaction = async (req, res) => {
   const dateNow = new Date();
 
   const currentDate = formatDate(dateNow);
-  const transactionDate = new Date(date.toLocaleString());
+  const transactionDate = formatDate(new Date(date));
 
   if (transactionDate.getTime() > currentDate.getTime()) {
     throw new BadRequest('Cannot select future date');
