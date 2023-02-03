@@ -5,7 +5,7 @@ const { User } = require('../../models');
 const { SECRET_KEY } = process.env;
 
 const BASE_FRONTEND_URL =
-  'https://jekiekolya.github.io/wallet-leopards-team-FRONTEND';
+  'https://jekiekolya.github.io/wallet-leopards-team-FRONTEND/google-auth';
 
 const googleAuth = async (req, res) => {
   const { _id: id } = req.user;
