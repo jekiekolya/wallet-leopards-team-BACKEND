@@ -1,5 +1,7 @@
 const Joi = require('joi');
 
+const emailPattern = /^\w+[\w-.]*\w@\w+((-\w+)|(\w*))\.[a-z]{2,3}$/
+
 // NOTE: There may be an additional field like NAME_USER
 const registerUserSchema = Joi.object({
   firstName: Joi.string().trim().min(1).max(12).required().messages({
@@ -9,9 +11,10 @@ const registerUserSchema = Joi.object({
     'string.max': `{{#label}} should have a maximum length of 12`,
     'any.required': `{{#label}} is a required field`,
   }),
-  email: Joi.string().trim().email().required().messages({
+  email: Joi.string().trim().pattern(emailPattern).email().required().messages({
     'string.base': `{{#label}} should be a type of string`,
     'string.empty': `{{#label}} must contain value`,
+    'string.pattern': `{{#label}} must be a valid email. For example: example123@example.com`,
     'string.email':
       '{{#label}} must be contain symbol @ and look like "jekie@gmail.com"',
     'any.required': `{{#label}} is a required field`,
