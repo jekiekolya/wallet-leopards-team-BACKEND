@@ -71,6 +71,7 @@ const addTransaction = async (req, res) => {
   if (!category) {
     const result = await Transaction.create({
       ...req.body,
+      date: transactionDate,
       amount: formatAmount,
       remainingBalance,
       owner,
@@ -93,6 +94,7 @@ const addTransaction = async (req, res) => {
 
     const result = await Transaction.create({
       ...req.body,
+      date: transactionDate,
       amount: formatAmount,
       category: isCategory,
       remainingBalance,
