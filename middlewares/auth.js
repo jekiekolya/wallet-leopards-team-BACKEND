@@ -28,7 +28,6 @@ const auth = async (req, res, next) => {
       error.status = 401;
     }
 
-    console.log(error.message);
     if (error.message === 'invalid token') {
       error.status = 401;
     }
