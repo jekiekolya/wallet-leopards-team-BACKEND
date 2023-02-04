@@ -1,9 +1,9 @@
 const { isValidObjectId } = require('mongoose');
 
 const isValidId = (req, _, next) => {
-  const { contactId } = req.params;
-  if (!isValidObjectId(contactId)) {
-    const error = new Error(`${contactId} is not correct`);
+  const { transactionId } = req.params;
+  if (!isValidObjectId(transactionId)) {
+    const error = new Error(`${transactionId} is not correct`);
     error.status = 400;
     next(error);
   }

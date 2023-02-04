@@ -5,7 +5,7 @@ const formatNumber = require('../../helpers/formatNumber');
 
 const userStatistics = async (req, res) => {
   const { _id: owner, firstName } = req.user;
-  const { totalBalance } = await User.findByIdAndUpdate(owner);
+  const { totalBalance } = await User.findById(owner);
   const yearsNow = new Date().getFullYear();
   const monthNow = new Date().getMonth();
 
