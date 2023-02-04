@@ -66,22 +66,25 @@ const userStatistics = async (req, res) => {
 
       return acc;
     }, []);
+
     return data;
   };
 
-  const createCategoryObject = transaction =>
-    transaction.map(item => {
+  const createCategoryObject = transaction => {
+    const object = transaction.map(item => {
       const id = item.category._id;
       const name = item.category.name;
       const amount = item.amount;
       const color = item.category.color;
-      const object = { id, name, amount, color };
-      return object;
+      return { id, name, amount, color };
     });
+    return object;
+  };
 
   const allDataExpensesByCategory = amountByTransaction(
     getAllExpensesTransaction
   );
+
   const allExpensesByCategory = createCategoryObject(allDataExpensesByCategory);
 
   const expensesDataByPeriod = amountByTransaction(

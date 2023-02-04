@@ -5,11 +5,10 @@ const { formatNumber } = require('../../helpers');
 
 const deleteTransaction = async (req, res) => {
   const { transactionId } = req.params;
-  console.log(req.params);
+
   const { _id: owner } = req.user;
 
   const trx = await Transaction.findByIdAndRemove(transactionId);
-  console.log(trx);
 
   if (!trx) {
     throw new NotFound('Transaction not found');
@@ -19,10 +18,8 @@ const deleteTransaction = async (req, res) => {
     owner,
     date: { $gt: trx.date },
   }).sort({ date: 1 });
-  console.log(trxLater);
 
   if (trxLater.length > 0) {
-    console.log(111);
     const recountRemainingBalance = trxLater.map(async it => {
       let newRemainingBalance = '';
 
