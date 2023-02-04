@@ -93,11 +93,7 @@ const deleteTransaction = async (req, res) => {
     );
   }
 
-  res.status(200).json({
-    status: 'success',
-    code: 200,
-    message: 'Transaction deleted',
-  });
+  res.status(204).json('No content');
 };
 
 module.exports = deleteTransaction;

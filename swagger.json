@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "version": "1.0.3",
+    "version": "1.0.4",
     "title": "Wallet API docs",
     "description": "API documentation for project Wallet."
   },
@@ -634,6 +634,57 @@
         }
       }
     },
+    "/api/transactions/{transactionId}": {
+      "delete": {
+        "tags": ["Transaction"],
+        "summary": "Delete transaction",
+        "security": [{ "Bearer": [] }],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "transactionId",
+            "type": "string",
+            "required": "true"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted successfully",
+            "content": {}
+          },
+          "400": {
+            "description": "Bad request (invalid id)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorBadRequesResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Not authorized (no token provided)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorUnauthorizedResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Transaction not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorNotFoundResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/transactions/statistics": {
       "get": {
         "tags": ["Transaction"],
@@ -722,6 +773,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/errorUnauthorizedResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "This category is already exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/errorAddCategoryResponse"
                 }
               }
             }
@@ -902,12 +963,21 @@
                           "type": "string",
                           "description": "Category name",
                           "example": "Main expenses"
+                        },
+                        "color": {
+                          "type": "string",
+                          "description": "Color in HEX format",
+                          "example": "#1c1509"
                         }
                       }
                     },
                     "example": [
-                      { "_id": "1", "name": "Main expenses" },
-                      { "_id": "2", "name": "Products" }
+                      {
+                        "_id": "1",
+                        "name": "Main expenses",
+                        "color": "#1c1509"
+                      },
+                      { "_id": "2", "name": "Products", "color": "#4b1545" }
                     ]
                   }
                 }
@@ -1055,12 +1125,21 @@
                           "type": "string",
                           "description": "Category name",
                           "example": "Main expenses"
+                        },
+                        "color": {
+                          "type": "string",
+                          "description": "Color in HEX format",
+                          "example": "#1c1509"
                         }
                       }
                     },
                     "example": [
-                      { "_id": "1", "name": "Main expenses" },
-                      { "_id": "2", "name": "Products" }
+                      {
+                        "_id": "1",
+                        "name": "Main expenses",
+                        "color": "#1c1509"
+                      },
+                      { "_id": "2", "name": "Products", "color": "#4b1545" }
                     ]
                   },
                   "subscription": {
@@ -1108,12 +1187,21 @@
                       "type": "string",
                       "description": "Category name",
                       "example": "Main expenses"
+                    },
+                    "color": {
+                      "type": "string",
+                      "description": "Color in HEX format",
+                      "example": "#1c1509"
                     }
                   }
                 },
                 "example": [
-                  { "_id": "1", "name": "Main expenses" },
-                  { "_id": "2", "name": "Products" }
+                  {
+                    "_id": "1",
+                    "name": "Main expenses",
+                    "color": "#1c1509"
+                  },
+                  { "_id": "2", "name": "Products", "color": "#4b1545" }
                 ]
               }
             }
@@ -1365,7 +1453,11 @@
                   "category": {
                     "type": "object",
                     "description": "Category object. This field will only be populated if the transaction type is false",
-                    "example": { "_id": "1", "name": "Main expense" }
+                    "example": {
+                      "_id": "1",
+                      "name": "Main expenses",
+                      "color": "#1c1509"
+                    }
                   },
                   "owner": {
                     "type": "string",
@@ -1451,7 +1543,11 @@
                     "category": {
                       "type": "object",
                       "description": "Category object. This field will only be populated if the transaction type is false",
-                      "example": { "_id": "1", "name": "Main expense" }
+                      "example": {
+                        "_id": "1",
+                        "name": "Main expenses",
+                        "color": "#1c1509"
+                      }
                     },
                     "owner": {
                       "type": "object",
@@ -1522,7 +1618,11 @@
               "amount": "500",
               "date": "2023-01-27T10:33:43.335+00:00",
               "comment": "Donate for victory",
-              "category": { "_id": "1", "name": "Main expense" },
+              "category": {
+                "_id": "1",
+                "name": "Main expenses",
+                "color": "#1c1509"
+              },
               "owner": {
                 "_id": "1d500a7035cf0304c000e",
                 "firstName": "Mark",
@@ -1627,12 +1727,27 @@
                           "type": "string",
                           "description": "Expenses amount for this category",
                           "example": "3500"
+                        },
+                        "color": {
+                          "type": "string",
+                          "description": "Color in HEX format",
+                          "example": "#1c1509"
                         }
                       }
                     },
                     "example": [
-                      { "_id": "1", "name": "Main expenses", "amount": "3500" },
-                      { "_id": "2", "name": "Products", "amount": "2500" }
+                      {
+                        "_id": "1",
+                        "name": "Main expenses",
+                        "amount": "3500",
+                        "color": "#1c1509"
+                      },
+                      {
+                        "_id": "2",
+                        "name": "Products",
+                        "amount": "2500",
+                        "color": "#4b1545"
+                      }
                     ]
                   },
                   "allExpensesByCategory": {
@@ -1655,6 +1770,11 @@
                           "type": "string",
                           "description": "Expenses amount for this category",
                           "example": "15500"
+                        },
+                        "color": {
+                          "type": "string",
+                          "description": "Color in HEX format",
+                          "example": "#1c1509"
                         }
                       }
                     },
@@ -1662,9 +1782,15 @@
                       {
                         "_id": "1",
                         "name": "Products",
-                        "amount": "15500"
+                        "amount": "15500",
+                        "color": "#4b1545"
                       },
-                      { "_id": "3", "name": "Car", "amount": "3000" }
+                      {
+                        "_id": "3",
+                        "name": "Car",
+                        "amount": "3000",
+                        "color": "#2v8005"
+                      }
                     ]
                   }
                 }
@@ -1711,6 +1837,11 @@
                 "type": "string",
                 "description": "Category name",
                 "example": "Computer games"
+              },
+              "color": {
+                "type": "string",
+                "description": "Color in HEX format",
+                "example": "#1c1509"
               }
             }
           }
@@ -1773,6 +1904,24 @@
             "type": "string",
             "description": "Error message",
             "example": "Not found"
+          }
+        }
+      },
+      "errorAddCategoryResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "failure"
+          },
+          "code": {
+            "type": "integer",
+            "example": "409"
+          },
+          "message": {
+            "type": "string",
+            "description": "Error message",
+            "example": "The category you are trying to add already exists"
           }
         }
       },
