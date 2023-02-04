@@ -43,17 +43,6 @@ const deleteTransaction = async (req, res) => {
         newRemainingBalance = formatNumber(calculatedBalance);
       }
 
-      // if (trx.transactionType) {
-      //   const calculatedBalance = it.remainingBalance + trx.amount;
-      //   newRemainingBalance = formatNumber(calculatedBalance);
-      // }
-      // if (!trx.transactionType) {
-      //   const calculatedBalance = it.remainingBalance - trx.amount;
-      //   newRemainingBalance = formatNumber(calculatedBalance);
-      // }
-
-      console.log('rem', newRemainingBalance);
-
       await Transaction.findOneAndUpdate(
         { _id: it._id },
         {
@@ -65,7 +54,7 @@ const deleteTransaction = async (req, res) => {
     });
 
     const balanceData = await Promise.all(recountRemainingBalance);
-    console.log('balance', balanceData);
+
     const recalculatedUserBalance = balanceData[balanceData.length - 1];
 
     await User.findByIdAndUpdate(
@@ -77,10 +66,7 @@ const deleteTransaction = async (req, res) => {
   }
 
   if (trxLater.length === 0) {
-    console.log(111);
     let newTotalBalance = '';
-
-    console.log('tB', typeof totalBalance);
 
     if (trx.transactionType && totalBalance < 0) {
       const calculatedBalance = totalBalance - trx.amount;
@@ -99,9 +85,6 @@ const deleteTransaction = async (req, res) => {
       const calculatedBalance = totalBalance + trx.amount;
       newTotalBalance = formatNumber(calculatedBalance);
     }
-
-    console.log(newTotalBalance);
-    console.log('nB', typeof newTotalBalance);
 
     await User.findByIdAndUpdate(
       { _id: owner },
