@@ -5,8 +5,7 @@ const { formatNumber } = require('../../helpers');
 
 const deleteTransaction = async (req, res) => {
   const { transactionId } = req.params;
-
-  const { _id: owner } = req.user;
+  const { _id: owner, totalBalance } = req.user;
 
   const trx = await Transaction.findByIdAndRemove(transactionId);
 
@@ -23,12 +22,23 @@ const deleteTransaction = async (req, res) => {
     const recountRemainingBalance = trxLater.map(async it => {
       let newRemainingBalance = '';
 
-      if (trx.transactionType) {
+      if (trx.transactionType && it.remainingBalance < 0) {
+        const calculatedBalance = it.remainingBalance - trx.amount;
+        newRemainingBalance = formatNumber(calculatedBalance);
+      }
+
+      if (trx.transactionType && it.remainingBalance > 0) {
+        const calculatedBalance = it.remainingBalance - trx.amount;
+        newRemainingBalance = formatNumber(calculatedBalance);
+      }
+
+      if (!trx.transactionType && it.remainingBalance < 0) {
         const calculatedBalance = it.remainingBalance + trx.amount;
         newRemainingBalance = formatNumber(calculatedBalance);
       }
-      if (!trx.transactionType) {
-        const calculatedBalance = it.remainingBalance - trx.amount;
+
+      if (!trx.transactionType && it.remainingBalance > 0) {
+        const calculatedBalance = it.remainingBalance + trx.amount;
         newRemainingBalance = formatNumber(calculatedBalance);
       }
 
@@ -43,6 +53,7 @@ const deleteTransaction = async (req, res) => {
     });
 
     const balanceData = await Promise.all(recountRemainingBalance);
+
     const recalculatedUserBalance = balanceData[balanceData.length - 1];
 
     await User.findByIdAndUpdate(
@@ -53,7 +64,36 @@ const deleteTransaction = async (req, res) => {
     );
   }
 
-  return res.status(200).json({
+  if (trxLater.length === 0) {
+    let newTotalBalance = '';
+
+    if (trx.transactionType && totalBalance < 0) {
+      const calculatedBalance = totalBalance - trx.amount;
+      newTotalBalance = formatNumber(calculatedBalance);
+    }
+    if (trx.transactionType && totalBalance > 0) {
+      const calculatedBalance = totalBalance - trx.amount;
+      newTotalBalance = formatNumber(calculatedBalance);
+    }
+
+    if (!trx.transactionType && totalBalance < 0) {
+      const calculatedBalance = totalBalance + trx.amount;
+      newTotalBalance = formatNumber(calculatedBalance);
+    }
+    if (!trx.transactionType && totalBalance > 0) {
+      const calculatedBalance = totalBalance + trx.amount;
+      newTotalBalance = formatNumber(calculatedBalance);
+    }
+
+    await User.findByIdAndUpdate(
+      { _id: owner },
+      {
+        totalBalance: newTotalBalance,
+      }
+    );
+  }
+
+  res.status(200).json({
     status: 'success',
     code: 200,
     message: 'Transaction deleted',
