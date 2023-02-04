@@ -1,13 +1,16 @@
 const { Transaction } = require('../models');
+const { formatDate } = require('../helpers');
 
 const checkTransactionDate = async (req, res, next) => {
   const { _id: owner, categories } = req.user;
 
   const { amount, date, transactionType } = req.body;
 
+  const trxDate = formatDate(new Date(date));
+
   const transactionsByDate = await Transaction.find({
     owner,
-    date: { $gt: date },
+    date: { $gt: trxDate },
   }).sort({ date: 1 });
 
   if (transactionsByDate.length > 0) {
