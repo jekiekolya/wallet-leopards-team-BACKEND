@@ -8,6 +8,7 @@ const {
   auth,
   ctrlWrapper,
   checkTransactionDate,
+  isValidId,
 } = require('../../middlewares');
 
 router.post(
@@ -22,4 +23,10 @@ router.get('/', auth, ctrlWrapper(ctrl.getAll));
 
 router.get('/statistics', auth, ctrlWrapper(ctrl.userStatistics));
 
+router.delete(
+  '/:transactionId',
+  isValidId,
+  auth,
+  ctrlWrapper(ctrl.deleteTransaction)
+);
 module.exports = router;
