@@ -12,7 +12,7 @@ const removeCategory = async (req, res) => {
   const checkCategories = categories.find(item => item._id === categoryId);
 
   if (!checkCategories) {
-    throw new Conflict('The category you are trying to delete not exists');
+    throw new Conflict('The category you are trying to delete does not exists');
   }
 
   const update = [...categories].filter(item => {
