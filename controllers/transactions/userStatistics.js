@@ -55,14 +55,16 @@ const userStatistics = async (req, res) => {
   const expensesPerMonth = getTotalAmount(getAllExpensesTransactionPerMonth);
   const balancePerMont = incomePerMonth - expensesPerMonth;
 
-  const amountByTransaction = transaction => {
-    const data = transaction.reduce((acc, transaction) => {
-      const id = transaction.category._id;
+  const amountByTransaction = transactions => {
+    const data = transactions.reduce((acc, transaction) => {
+      const { category, amount } = transaction;
+      const id = category._id;
       const sameTransaction = acc.find(element => element.category._id === id);
+      const newSameTransaction = { category, amount };
 
       if (sameTransaction !== undefined) {
-        sameTransaction.amount += transaction.amount;
-      } else acc.push(transaction);
+        sameTransaction.amount += newSameTransaction.amount;
+      } else acc.push(newSameTransaction);
 
       return acc;
     }, []);
@@ -81,16 +83,17 @@ const userStatistics = async (req, res) => {
     return object;
   };
 
+  const expensesDataByPeriod = amountByTransaction(
+    getAllExpensesTransactionPerMonth
+  );
+
+  const expensesByPeriod = createCategoryObject(expensesDataByPeriod);
+
   const allDataExpensesByCategory = amountByTransaction(
     getAllExpensesTransaction
   );
 
   const allExpensesByCategory = createCategoryObject(allDataExpensesByCategory);
-
-  const expensesDataByPeriod = amountByTransaction(
-    getAllExpensesTransactionPerMonth
-  );
-  const expensesByPeriod = createCategoryObject(expensesDataByPeriod);
 
   const data = {
     firstName,
