@@ -18,7 +18,6 @@ const deleteTransaction = async (req, res) => {
     owner,
     date: { $gt: trxDate },
   }).sort({ date: 1 });
-  console.log(trxLater);
 
   if (trxLater.length > 0) {
     const recountRemainingBalance = trxLater.map(async it => {
