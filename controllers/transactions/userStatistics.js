@@ -66,7 +66,7 @@ const userStatistics = async (req, res) => {
 
       return acc;
     }, []);
-    console.log('data :>> ', data);
+
     return data;
   };
 
@@ -84,13 +84,13 @@ const userStatistics = async (req, res) => {
   const allDataExpensesByCategory = amountByTransaction(
     getAllExpensesTransaction
   );
-  console.log('allDataExpensesByCategory', allDataExpensesByCategory);
+
   const allExpensesByCategory = createCategoryObject(allDataExpensesByCategory);
 
-  // const expensesDataByPeriod = amountByTransaction(
-  //   getAllExpensesTransactionPerMonth
-  // );
-  // const expensesByPeriod = createCategoryObject(expensesDataByPeriod);
+  const expensesDataByPeriod = amountByTransaction(
+    getAllExpensesTransactionPerMonth
+  );
+  const expensesByPeriod = createCategoryObject(expensesDataByPeriod);
 
   const data = {
     firstName,
@@ -102,7 +102,7 @@ const userStatistics = async (req, res) => {
     totalExpenses,
     totalBalance,
     searchPeriod: { month, year },
-    // expensesByPeriod,
+    expensesByPeriod,
     allExpensesByCategory,
   };
 
