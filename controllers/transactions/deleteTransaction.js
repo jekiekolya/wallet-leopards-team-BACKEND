@@ -1,7 +1,7 @@
 const { NotFound } = require('http-errors');
 
 const { Transaction, User } = require('../../models');
-const { formatNumber, formatDate } = require('../../helpers');
+const { formatNumber } = require('../../helpers');
 
 const deleteTransaction = async (req, res) => {
   const { transactionId } = req.params;
@@ -12,11 +12,10 @@ const deleteTransaction = async (req, res) => {
   if (!trx) {
     throw new NotFound('Transaction not found');
   }
-  const trxDate = formatDate(new Date(trx.date));
 
   const trxLater = await Transaction.find({
     owner,
-    date: { $gt: trxDate },
+    date: { $gt: trx.date },
   }).sort({ date: 1 });
 
   if (trxLater.length > 0) {
