@@ -4,7 +4,7 @@ function formatDate(date) {
       date.getFullYear(),
       date.getMonth(),
       date.getDate(),
-      date.getHours() + 2,
+      date.getHours(),
       date.getMinutes(),
       date.getSeconds()
     )
