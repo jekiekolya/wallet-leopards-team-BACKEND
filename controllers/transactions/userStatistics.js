@@ -66,28 +66,31 @@ const userStatistics = async (req, res) => {
 
       return acc;
     }, []);
+    console.log('data :>> ', data);
     return data;
   };
 
-  const createCategoryObject = transaction =>
-    transaction.map(item => {
+  const createCategoryObject = transaction => {
+    const object = transaction.map(item => {
       const id = item.category._id;
       const name = item.category.name;
       const amount = item.amount;
       const color = item.category.color;
-      const object = { id, name, amount, color };
-      return object;
+      return { id, name, amount, color };
     });
+    return object;
+  };
 
   const allDataExpensesByCategory = amountByTransaction(
     getAllExpensesTransaction
   );
+  console.log('allDataExpensesByCategory', allDataExpensesByCategory);
   const allExpensesByCategory = createCategoryObject(allDataExpensesByCategory);
 
-  const expensesDataByPeriod = amountByTransaction(
-    getAllExpensesTransactionPerMonth
-  );
-  const expensesByPeriod = createCategoryObject(expensesDataByPeriod);
+  // const expensesDataByPeriod = amountByTransaction(
+  //   getAllExpensesTransactionPerMonth
+  // );
+  // const expensesByPeriod = createCategoryObject(expensesDataByPeriod);
 
   const data = {
     firstName,
@@ -99,7 +102,7 @@ const userStatistics = async (req, res) => {
     totalExpenses,
     totalBalance,
     searchPeriod: { month, year },
-    expensesByPeriod,
+    // expensesByPeriod,
     allExpensesByCategory,
   };
 
