@@ -146,10 +146,10 @@ const userStatistics = async (req, res) => {
     }
   );
 
-  const expensesPerMonth = expensePerMonthFromBD[0].totalSum;
-  const incomePerMonth = incomePerMonthFromBD[0].totalSum;
-  const totalIncome = totalIncomeFromBD[0].totalSum;
-  const totalExpenses = totalExpensesFromBD[0].totalSum;
+  const expensesPerMonth = expensePerMonthFromBD[0]?.totalSum ?? 0;
+  const incomePerMonth = incomePerMonthFromBD[0]?.totalSum ?? 0;
+  const totalIncome = totalIncomeFromBD[0]?.totalSum ?? 0;
+  const totalExpenses = totalExpensesFromBD[0]?.totalSum ?? 0;
 
   const balancePerMont = formatNumber(incomePerMonth - expensesPerMonth);
 
