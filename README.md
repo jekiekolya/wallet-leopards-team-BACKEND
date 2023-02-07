@@ -3,6 +3,9 @@
 There is a REST API for the project -
 [Wallet](https://jekiekolya.github.io/wallet-leopards-team-FRONTEND/).
 
+Link to the repository with the frontend -
+[wallet-leopards-team-FRONTEND](https://github.com/jekiekolya/wallet-leopards-team-FRONTEND).
+
 ## Overview
 
 To implement this project were used Data Base
