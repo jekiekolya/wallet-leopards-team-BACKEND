@@ -5,7 +5,7 @@ const formatNumber = require('../../helpers/formatNumber');
 
 const userStatistics = async (req, res) => {
   const { _id: owner, firstName } = req.user;
-  const { totalBalance } = await User.findByIdAndUpdate(owner);
+  const { totalBalance } = await User.findById(owner);
   const yearsNow = new Date().getFullYear();
   const monthNow = new Date().getMonth();
 
@@ -17,73 +17,141 @@ const userStatistics = async (req, res) => {
     );
   }
 
-  const allTransaction = await Transaction.find({ owner }, ' -updatedAt');
-
   const startDate = new Date(year, month - 1, 1, 1);
   const endDate = new Date(year, month, 1, 0, 59, 59);
 
-  const getAllExpensesTransaction = allTransaction.filter(
-    item => item.transactionType === false
+  const expensesByPeriodFromBD = await Transaction.aggregate([
+    {
+      $match: {
+        owner,
+        transactionType: false,
+        date: {
+          $gt: startDate,
+          $lt: endDate,
+        },
+      },
+    },
+    {
+      $group: {
+        _id: '$category',
+        totalSum: { $sum: '$amount' },
+      },
+    },
+  ]);
+
+  const incomePerMonthFromBD = await Transaction.aggregate([
+    {
+      $match: {
+        owner,
+        transactionType: true,
+        date: {
+          $gt: startDate,
+          $lt: endDate,
+        },
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        totalSum: { $sum: '$amount' },
+      },
+    },
+  ]);
+
+  const expensePerMonthFromBD = await Transaction.aggregate([
+    {
+      $match: {
+        owner,
+        transactionType: false,
+        date: {
+          $gt: startDate,
+          $lt: endDate,
+        },
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        totalSum: { $sum: '$amount' },
+      },
+    },
+  ]);
+
+  const allExpensesByCategoryFromBD = await Transaction.aggregate([
+    {
+      $match: {
+        owner,
+        transactionType: false,
+      },
+    },
+    {
+      $group: {
+        _id: '$category',
+        totalSum: { $sum: '$amount' },
+      },
+    },
+  ]);
+
+  const totalIncomeFromBD = await Transaction.aggregate([
+    {
+      $match: {
+        owner,
+        transactionType: true,
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        totalSum: { $sum: '$amount' },
+      },
+    },
+  ]);
+
+  const totalExpensesFromBD = await Transaction.aggregate([
+    {
+      $match: {
+        owner,
+        transactionType: false,
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        totalSum: { $sum: '$amount' },
+      },
+    },
+  ]);
+
+  const expensesByPeriod = expensesByPeriodFromBD.map(({ _id, totalSum }) => {
+    const expensesByCategory = {
+      id: _id._id,
+      name: _id.name,
+      amount: totalSum,
+      color: _id.color,
+    };
+
+    return expensesByCategory;
+  });
+
+  const allExpensesByCategory = allExpensesByCategoryFromBD.map(
+    ({ _id, totalSum }) => {
+      const totalExpensesByCategory = {
+        id: _id._id,
+        name: _id.name,
+        amount: totalSum,
+        color: _id.color,
+      };
+
+      return totalExpensesByCategory;
+    }
   );
 
-  const getAllIncomeTransaction = allTransaction.filter(
-    item => item.transactionType === true
-  );
+  const expensesPerMonth = expensePerMonthFromBD[0]?.totalSum ?? 0;
+  const incomePerMonth = incomePerMonthFromBD[0]?.totalSum ?? 0;
+  const totalIncome = totalIncomeFromBD[0]?.totalSum ?? 0;
+  const totalExpenses = totalExpensesFromBD[0]?.totalSum ?? 0;
 
-  const getExpensesTransactionPerMonth = allTransaction.filter(
-    item => item.date >= startDate && item.date <= endDate
-  );
-
-  const getAllIncomeTransactionPerMonth = getExpensesTransactionPerMonth.filter(
-    item => item.transactionType === true
-  );
-
-  const getAllExpensesTransactionPerMonth =
-    getExpensesTransactionPerMonth.filter(
-      item => item.transactionType === false
-    );
-
-  const getTotalAmount = data =>
-    data.reduce(
-      (acc, transaction) => acc + formatNumber(transaction.amount),
-      0
-    );
-
-  const totalIncome = getTotalAmount(getAllIncomeTransaction);
-  const totalExpenses = getTotalAmount(getAllExpensesTransaction);
-  const incomePerMonth = getTotalAmount(getAllIncomeTransactionPerMonth);
-  const expensesPerMonth = getTotalAmount(getAllExpensesTransactionPerMonth);
-  const balancePerMont = incomePerMonth - expensesPerMonth;
-
-  const amountByTransaction = transaction =>
-    transaction.reduce((acc, transaction) => {
-      const id = transaction.category._id;
-      const sameTransaction = acc.find(element => element.category._id === id);
-
-      if (sameTransaction !== undefined)
-        sameTransaction.amount += formatNumber(transaction.amount);
-      else acc.push(transaction);
-
-      return acc;
-    }, []);
-
-  const createCategoryObject = transaction =>
-    transaction.map(item => {
-      const id = item.category._id;
-      const name = item.category.name;
-      const amount = item.amount;
-      const color = item.category.color;
-      const object = { id, name, amount, color };
-      return object;
-    });
-
-  const expensesByPeriod = createCategoryObject(
-    amountByTransaction(getAllExpensesTransactionPerMonth)
-  );
-
-  const allExpensesByCategory = createCategoryObject(
-    amountByTransaction(getAllExpensesTransaction)
-  );
+  const balancePerMont = formatNumber(incomePerMonth - expensesPerMonth);
 
   const data = {
     firstName,
