@@ -25,12 +25,12 @@ const createEmailMarkup = function (verificationToken) {
       }
       
         h2{
-        font-size: 28px;
+        font-size: 36px;
         font-weight: 900; 
       }
       
       p {
-        font-weight: 100;
+         font-weight: bold;
       }
       
       td {
@@ -54,6 +54,10 @@ const createEmailMarkup = function (verificationToken) {
         color: white;
         border-radius: 5px; 
         box-shadow: 3px 3px #d94c53;
+      }
+      span{
+        font-weight: bold;
+        color: #253342;
       }
       
       .subtle-link {
@@ -104,7 +108,7 @@ const createEmailMarkup = function (verificationToken) {
        <td>
         <h2> Confirmation</h2>
             <h3>Please, <a  target="_blank" href="https://jekiekolya.github.io/wallet-leopards-team-FRONTEND/signUp/verify/${verificationToken}">confirm</a> your email</h3>
-              
+              <p>This link active only <span>one day</span></p>
   </table>
        
       </div>
